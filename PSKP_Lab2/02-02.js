@@ -1,10 +1,11 @@
 var http = require('http');
 var fs = require('fs');
+const route = 'png';
 
 http.createServer(function (request, response) {
     console.log(request.url);
 
-    if (request.url === '/png')
+    if (request.url === '/' + route)
     {
         const fname = './toxa.jpg';
         let jpg = null;
@@ -20,5 +21,5 @@ http.createServer(function (request, response) {
         })
     }
     else
-        response.end('<html><body><h1>Error! Visit localhost:5000/png</h1></body></html>')
-}).listen(5000, () => console.log('Server running at localhost:5000/png'));
+        response.end('<html><body><h1>Error! Visit localhost:5000/' + route + '</h1></body></html>');
+}).listen(5000, () => console.log('Server running at localhost:5000/' + route));

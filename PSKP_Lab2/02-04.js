@@ -1,22 +1,21 @@
 var http = require('http');
-var XMLHttpRequest = require('xhr2');
-var xhr = new XMLHttpRequest();
+var fs = require('fs');
 
-xhr.open('GET', 'localhost:5000/api/name', true);
-xhr.send();
+http.createServer((request, response) => {
+    const httpFileName = './xmlhttprequest.html';
 
-xhr.onreadystatechange = function() { // (3)
-    if (xhr.readyState != 4) return;
-  
-    button.innerHTML = 'Готово!';
-  
-    if (xhr.status != 200) {
-      alert(xhr.status + ': ' + xhr.statusText);
-    } else {
-      alert(xhr.responseText);
+    if (request.url === '/api/name')
+    {
+        response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
+        response.end('Валдайцев Александр Денисович')
     }
-  
-  }
-  
-  button.innerHTML = 'Загружаю...'; // (2)
-  button.disabled = true;
+    else if (request.url === '/xmlhttprequest')
+    {
+        fs.readFile(httpFileName, (error, data) => {
+            response.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'});
+            error != null ? console.log("error:" + error) : response.end(data);
+        });
+    }
+    else 
+        response.end('<html><body><h1>Error! Visit localhost:5000/xmlhttprequest</h1></body></html>')
+}).listen(5000, () => console.log('Server running at localhost:5000/xmlhttprequest'));
