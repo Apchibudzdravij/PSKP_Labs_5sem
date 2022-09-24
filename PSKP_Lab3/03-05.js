@@ -12,7 +12,7 @@ var factorial = (x) =>
         return 1; 
     else 
     {
-        return x * factorial(x - 1);
+        return (x * factorial(x - 1));
     }
 };
 
@@ -23,7 +23,7 @@ function Fact(n, cb)
     this.fn = n;
     this.factt = factorial;
     this.fcb = cb;
-    this.calc = () => {process.nextTick(() => {this.fcb(null, this.factt(this.fn))})}
+    this.calc = () => {setImmediate(() => {this.fcb(null, this.factt(this.fn))})}
 }
 
 
