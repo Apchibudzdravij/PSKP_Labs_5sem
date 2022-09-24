@@ -11,8 +11,20 @@ var factorial = (x) =>
     else if (x == 0 || x == 1) 
         return 1; 
     else 
-        return x * factorial(x - 1);
+    {
+        return (x * factorial(x - 1));
+    }
 };
+
+
+
+function Fact(n, cb)
+{
+    this.fn = n;
+    this.factt = factorial;
+    this.fcb = cb;
+    this.calc = () => {process.nextTick(() => {this.fcb(null, this.factt(this.fn))})}
+}
 
 
 
@@ -25,7 +37,11 @@ http.createServer(function(request, response) {
             if (Number.isInteger(k))
             {
                 response.writeHead(200, {'Content-Type': 'application/json; charset=utf-8'});
-                response.end(JSON.stringify({ k: k, fact: factorial(k) }));
+                var facts = new Fact(k, (err, result) => 
+                {
+                    response.end(JSON.stringify({ k: k, fact: result })); 
+                });
+                facts.calc();
             }
     }
     else if (url.parse(request.url).pathname === '/')
