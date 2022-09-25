@@ -15,18 +15,17 @@ var factorial = (x) =>
 };
 
 
-
-http.createServer(function(request, response) {
+http.createServer((request, response) => {
  
     var rc = JSON.stringify({ k: 0 , fact: 0 });
     if (url.parse(request.url).pathname === '/' + route && typeof url.parse(request.url, true).query.k != 'undefined')
     {
-            var k = parseInt(url.parse(request.url, true).query.k);
-            if (Number.isInteger(k))
-            {
-                response.writeHead(200, {'Content-Type': 'application/json; charset=utf-8'});
-                response.end(JSON.stringify({ k: k, fact: factorial(k) }));
-            }
+        var k = parseInt(url.parse(request.url, true).query.k);
+        if (Number.isInteger(k))
+        {
+            response.writeHead(200, {'Content-Type': 'application/json; charset=utf-8'});
+            response.end(JSON.stringify({k: k, fact: factorial(k)}));
+        }
     }
     else if (url.parse(request.url).pathname === '/')
     {

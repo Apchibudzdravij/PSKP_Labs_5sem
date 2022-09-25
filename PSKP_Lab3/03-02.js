@@ -14,7 +14,7 @@ var factorial = (x) =>
 };
 
 
-http.createServer(function(request, response) {
+http.createServer((request, response) => {
 
     var rc = JSON.stringify({ k: 0 });
     if (url.parse(request.url).pathname === '/' + route && typeof url.parse(request.url, true).query.k != 'undefined')
