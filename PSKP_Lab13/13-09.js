@@ -13,7 +13,7 @@ server.on('message', (msg, info) => {
         else
             console.log('Message sent to client succesfully.');
     })
-});
+})
 
 server.on('listening', () => {
     console.log(`\nServer port:  ${server.address().port}`);
