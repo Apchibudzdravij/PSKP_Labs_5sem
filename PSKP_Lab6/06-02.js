@@ -1,13 +1,19 @@
-import http from 'http';
-import url from 'url';
-import fs from 'fs';
-import { parse } from 'querystring';
-import nodemailer from 'nodemailer';
+// import http from 'http';
+// import url from 'url';
+// import fs from 'fs';
+// import { parse } from 'querystring';
+// import nodemailer from 'nodemailer';
 // to use imports instead of require, open package.json 
 // and add  "type": "module",  before "dependencies"
-
-
 // xbguckzhonlehivd
+
+
+
+const http = require('http');
+const url = require('url');
+const fs = require('fs');
+const { parse } = require('querystring');
+const nodemailer = require('nodemailer');
 
 
 
@@ -49,7 +55,7 @@ http.createServer((request, response) => {
             })
 
             response.end(`<h2>Отправитель: ${parm.sender}</br>Получатель: ${parm.receiver}
-                        </br>Тема: ${parm.subject}</br>Сообщение: ${parm.message}</h2>`);
+                    </br>Тема: ${parm.subject}</br>Сообщение: ${parm.message}</h2>`);
         })
     }
 
