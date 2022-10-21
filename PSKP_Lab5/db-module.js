@@ -1,5 +1,3 @@
-var http = require('http');
-var url = require('url');
 var util = require('util');
 var ee = require('events');
 console.log('imported db-module');
@@ -39,9 +37,13 @@ function DB()
 
     this.insert = (insertString) => 
     {
+        for (let i = 0; i < db.length; ++i)
+            if (JSON.parse(insertString).id == db[i].id) 
+                return JSON.stringify({ status: "Error" });
         db.push(JSON.parse(insertString));
         console.log("[INSERT]\n");
-        return JSON.stringify(db, null, 2);
+        return JSON.stringify({ status: "OK" });
+
     }
 
 
@@ -53,19 +55,25 @@ function DB()
         var id = jsonString.id;
         console.log("id to update: " + id + "\n");
         var index = db.findIndex(elem => elem.id === parseInt(id));
+        console.log('index: ', index);
+        if (index == -1)
+            return JSON.stringify({ status: "Error" });
         db[index].name = jsonString.name;
         db[index].bday = jsonString.bday;
-        return JSON.stringify(db[index], null, 2);
+        return JSON.stringify({ status: "OK" });
     }
 
-
+    
     this.delete = (id) => 
     {
         console.log("[DELETE]\n");
         var index = db.findIndex(elem => elem.id === parseInt(id));
+        if (index == -1)
+            return JSON.stringify({ status: "Error" });
         var deleted = db[index];
         db.splice(index, 1);
-        return JSON.stringify(deleted, null, 2);
+        return JSON.stringify({ status: "OK" });
+
     }
 
 

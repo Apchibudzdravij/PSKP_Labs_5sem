@@ -10,14 +10,16 @@ var db = new db_module.DB();
 
 
 db.on('GET', (req, res) => {
-    ++countOfRequests;
+    if (startDate != null && endDate == null) 
+        ++countOfRequests;
     console.log('GET called');
     res.end(db.select());
 });
 
 
 db.on('POST', (req, res) => {
-    ++countOfRequests;
+    if (startDate != null && endDate == null) 
+        ++countOfRequests;
     console.log('POST called');
     req.on('data', data => {
         res.end(db.insert(data));
@@ -26,7 +28,8 @@ db.on('POST', (req, res) => {
 
 
 db.on('PUT', (req, res) => {
-    ++countOfRequests;
+    if (startDate != null && endDate == null) 
+        ++countOfRequests;
     console.log('PUT called');
     req.on('data', data => {
         res.end(db.update(data));
@@ -35,7 +38,8 @@ db.on('PUT', (req, res) => {
 
 
 db.on('DELETE', (req, res) => {
-    ++countOfRequests;
+    if (startDate != null && endDate == null) 
+        ++countOfRequests;
     console.log('DELETE called');
     if (typeof url.parse(req.url, true).query.id != "undefined") {
         console.log("id is not undefined");
@@ -52,14 +56,15 @@ db.on('DELETE', (req, res) => {
 
 db.on('COMMIT', () => 
 {
-    ++countOfCommits;
+    if (startDate != null && endDate == null) 
+        ++countOfCommits;
     db.commit(); 
 });
 
 
 
 
-http.createServer((request, response) => {
+let server = http.createServer((request, response) => {
     switch (url.parse(request.url).pathname)
     {
         case '/api/db': 
@@ -101,6 +106,7 @@ let countOfCommits  = 0;
 let statistics = JSON.stringify({ start: 0, finish: 0, requests: 0, commits: 0 });
 let startDate = null;
 let endDate = null;
+process.stdin.unref();
 
 let stdin = process.openStdin();
 stdin.addListener('data', (cmd) => {
@@ -115,7 +121,7 @@ stdin.addListener('data', (cmd) => {
         console.log('The server will disconnect in ' + number + ' seconds. Type "sd" to abort');
         sdTimeout = setTimeout(() => {
             console.log('Server disconnected.');
-            process.exit(0);
+            server.close();
         }, millisecs);
     }
     else if (arg === 'sd')      // отмена остановки сервера

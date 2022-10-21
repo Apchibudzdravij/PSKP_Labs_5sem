@@ -39,6 +39,8 @@ function DB()
 
     this.insert = (insertString) => 
     {
+        for (let i = 0; i < db.length; ++i)
+            if (JSON.parse(insertString).id == db[i].id) { return; }
         db.push(JSON.parse(insertString));
         console.log("[INSERT]\n");
         return JSON.stringify(db, null, 2);

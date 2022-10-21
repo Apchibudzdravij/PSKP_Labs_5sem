@@ -49,6 +49,18 @@
         #select_result {
             margin-left: 5px;
         }
+
+        .error {
+            color: red;
+            font-size: 16px;
+            margin-left: 5px;
+        }
+
+        .ok {
+            color: lime;
+            font-size: 16px;
+            margin-left: 5px;
+        }
     </style>
 </head>
 
@@ -75,6 +87,7 @@
                 <p>BDay</p>
                 <input id="Bday" type="text" placeholder="DD-MM-YYYY">
             </div>
+            <p id="insert_error" class="error"></p>
             <button onclick="Post()">POST</button>
         </div>
 
@@ -92,6 +105,7 @@
                 <p>BDay</p>
                 <input id="Bday_put" type="text" placeholder="DD-MM-YYYY">
             </div>
+            <p id="update_error" class="error"></p>
             <button onclick="Put()">PUT</button>
         </div>
 
@@ -101,8 +115,10 @@
                 <p>Enter ID to delete</p>
                 <input id="ID_del" type="number" min="0">
             </div>
+            <p id="delete_error" class="error"></p>
             <button onclick="Delete()">DELETE</button>
         </div>
+
 
         <div id="stats_div" class="container">
             <button onclick="Stats()">STATS</button>
@@ -114,12 +130,13 @@
 
 
     <script>
+
         function Get() {
             fetch('http://localhost:5000/api/db', {
                 method: 'GET', mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }
             }).then(response => { return response.json(); })
-                .then((data) => { appendData(data); })
+                .then(data => { appendData(data); })
         }
 
 
@@ -130,8 +147,26 @@
                     method: 'POST', mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                     body: JSON.stringify({ id: ID.value, name: Name.value, bday: Bday.value })
-                }).then(response => { return response.json(); });
+                }).then(response => {
+                    let res = response.json().then(data => {
+                        console.log('status = ', data.status);
+                        if (data.status == "OK") {
+                            document.getElementById("insert_error").classList.add("ok");
+                            document.getElementById("insert_error").classList.remove("error");
+                            document.getElementById("insert_error").innerHTML = "OK! Data has been inserted.";
+                            return;
+                        }
+                        else {
+                            document.getElementById("insert_error").classList.remove("ok");
+                            document.getElementById("insert_error").classList.add("error");
+                            document.getElementById("insert_error").innerHTML = "Error! Enter non-recurring id.";
+                            return response.json();
+                        }
+                    });
+                });
             }
+            else
+                document.getElementById("insert_error").innerHTML = "Error! Fill all inputs.";
         }
 
 
@@ -142,7 +177,27 @@
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                     body: JSON.stringify({ id: ID_put.value, name: Name_put.value, bday: Bday_put.value })
-                }).then(response => { return response.json(); })
+                }).then(response => {
+                    let res = response.json().then(data => {
+                        console.log('status = ', data.status);
+                        if (data.status == "Error") {
+                            document.getElementById("update_error").classList.remove("ok");
+                            document.getElementById("update_error").classList.add("error");
+                            document.getElementById("update_error").innerHTML = "Error! Enter existing id.";
+                            return;
+                            
+                        }
+                        else {
+                            document.getElementById("update_error").classList.add("ok");
+                            document.getElementById("update_error").classList.remove("error");
+                            document.getElementById("update_error").innerHTML = "OK! Data has been inserted.";
+                            return;
+                        }
+                    });
+                })
+            }
+            else {
+                document.getElementById("update_error").innerHTML = "Error! Fill all inputs.";
             }
         }
 
@@ -153,7 +208,27 @@
                 fetch('http://localhost:5000/api/db?id=' + ID_del.value, {
                     method: 'DELETE',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }
-                }).then(response => { return response.json(); })
+                }).then(response => { 
+                    let res = response.json().then(data => {
+                        console.log('status = ', data.status);
+                        if (data.status == "Error") {
+                            document.getElementById("delete_error").classList.remove("ok");
+                            document.getElementById("delete_error").classList.add("error");
+                            document.getElementById("delete_error").innerHTML = "Error! Enter existing id.";
+                            return;
+                            
+                        }
+                        else {
+                            document.getElementById("delete_error").classList.add("ok");
+                            document.getElementById("delete_error").classList.remove("error");
+                            document.getElementById("delete_error").innerHTML = "OK! Data has been deleted.";
+                            return;
+                        }
+                    });
+                })
+            }
+            else {
+                document.getElementById("delete_error").innerHTML = "Error! Fill all inputs.";
             }
         }
 
@@ -165,7 +240,7 @@
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }
             }).then(response => { return response.json(); })
-                .then((data) => { appendStats(data); })
+                .then(data => { appendStats(data); })
         }
 
 
