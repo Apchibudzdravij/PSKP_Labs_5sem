@@ -6,14 +6,21 @@ const mod = require('./m07-01')('./static');
 
 let http_handler = (req, res) => {
     if (req.method === 'GET') {
-        if (mod.isStatic('html', req.url)) mod.sendFile(req, res, { 'Content-Type': 'text/html; charset=utf-8' });
-        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+        if      (mod.isStatic('html', req.url)) mod.sendFile(req, res, { 'Content-Type': 'text/html; charset=utf-8' });
+        else if (mod.isStatic('json', req.url)) mod.sendFile(req, res, { 'Content-Type': 'application/json; charset=utf-8' });
+        else if (mod.isStatic('docx', req.url)) mod.sendFile(req, res, { 'Content-Type': 'application/msword;' });
+        else if (mod.isStatic('mp4', req.url))  mod.sendFile(req, res, { 'Content-Type': 'video/mp4; charset=utf-8' });
+        else if (mod.isStatic('png', req.url))  mod.sendFile(req, res, { 'Content-Type': 'image/png; charset=utf-8' });
+        else if (mod.isStatic('xml', req.url))  mod.sendFile(req, res, { 'Content-Type': 'application/xml; charset=utf-8' });
+        else if (mod.isStatic('css', req.url))  mod.sendFile(req, res, { 'Content-Type': 'text/css; charset=utf-8' });
+        else if (mod.isStatic('js', req.url))   mod.sendFile(req, res, { 'Content-Type': 'text/javascript; charset=utf-8' });
+        else {
+            res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+            res.end('<h1>Enter filename in URI to see the file!</h1>');
+        }
     }
     else {
-        console.log('405 statuscode');
-        response.statusCode = 405;
-        response.statusMessage = 'Incorrect method';
-        response.end("[ERROR] 405 – Incorrect method. Use GET");
+       mod.writeHttp405(res);
     }
 }
 
