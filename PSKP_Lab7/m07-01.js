@@ -51,4 +51,4 @@ function StaticHandler(directory = './static') {
 }
 
 
-module.exports = (directory) => new StaticHandler(directory);
+module.exports = directory => new StaticHandler(directory);
