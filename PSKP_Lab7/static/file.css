@@ -58,14 +58,31 @@ a {
     margin-left: 8px;
 }
 
-#fix {
-    margin-bottom: 320px;
-}
-
 .title {
     margin-bottom: 10px;
+    margin-top: 20px;
 }
 
 #titleJS {
-    margin-left: 130px;
+    margin-left: 207px;
+}
+
+#titleXML {
+    margin-top: 370px;
+}
+
+#titleJSON {
+    margin-top: 410px;
+}
+
+#jsonInput {
+    width: 50%;
+}
+
+#wordTitle {
+    margin-left: 5px;
+}
+
+#videoDiv {
+    margin-left: 50px;
 }

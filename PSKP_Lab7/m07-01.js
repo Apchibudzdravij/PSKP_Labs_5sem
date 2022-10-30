@@ -32,20 +32,22 @@ function StaticHandler(directory = './static') {
 
 
     this.writeHttp404 = res => {
-        res.statusCode = 404;
-        res.statusMessage = 'Resource not found';
-        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-        res.end('<h2>[ERROR] 404: Resource not found.</h2>')
+        res.writeHead(404, 'Resource not found', { 'Content-Type': 'text/html; charset=utf-8' });
+        res.end('<h1>[ERROR] 404: Resource not found.</h1>')
     }
 
 
     this.writeHttp405 = res => {
-        console.log('405 statuscode');
-        res.statusCode = 405;
-        res.statusMessage = 'Incorrect method';
-        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-        res.end('<h1>[ERROR] 405 – Incorrect method. Use GET request method</h1>');
+        res.writeHead(405, 'Incorrect method', { 'Content-Type': 'text/html; charset=utf-8' });
+        res.end('<h1>[ERROR] 405: Incorrect method (Use GET request method)</h1>');
     }
+
+
+    this.writeHttp406 = res => {
+        res.writeHead(406, 'Incorrect URI', { 'Content-Type': 'text/html; charset=utf-8' });
+        res.end('<h1>[INFO] Enter filename in URI to see the file!</h1>');
+    }
+
 }
 
 
