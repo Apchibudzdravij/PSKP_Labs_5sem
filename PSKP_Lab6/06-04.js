@@ -1,4 +1,4 @@
-const send = require('secxmail');
+const send = require(process.env.NODE_GLOBAL + '\\secxmail');
 const http = require('http');
 
 http.createServer((req, res) => {
