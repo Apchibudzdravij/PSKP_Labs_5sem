@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<people>
+    <person>
+        <name>Alexander Secxndary</name>
+        <group>5</group>
+        <status>Daddy</status>
+    </person>
+    <person>
+        <name>Vlad Gud</name>
+        <group>5</group>
+        <status>Chupakabra</status>
+    </person>
+    <person>
+        <name>Anton Dimitriadi</name>
+        <group>5</group>
+        <status>Bublik</status>
+    </person>
+</people>

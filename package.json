@@ -7,5 +7,8 @@
     "secxmail": "^1.0.3",
     "sendmail": "^1.6.1",
     "xhr2": "^0.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.9"
   }
 }

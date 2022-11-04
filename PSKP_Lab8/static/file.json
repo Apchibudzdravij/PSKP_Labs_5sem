@@ -1,0 +1,51 @@
+{
+    "id": 1,
+    "name": "secxndary",
+    "status": [
+        {
+            "name": "dead inside"
+        },
+        {
+            "name": "emo"
+        },
+        {
+            "name": "drain"
+        },
+        {
+            "name": "epileptic"
+        },
+        {
+            "name": "paranoid"
+        },
+        {
+            "name": "toxic"
+        },
+        {
+            "name": "depressed"
+        },
+        {
+            "name": "tilted"
+        },
+        {
+            "name": "antisocial"
+        },
+        {
+            "name": "sad"
+        },
+        {
+            "name": "broken"
+        },
+        {
+            "name": "agressive"
+        },
+        {
+            "name": "psycho"
+        },
+        {
+            "name": "apathetic"
+        },
+        {
+            "name": "broken-hearted"
+        }
+    ]
+}

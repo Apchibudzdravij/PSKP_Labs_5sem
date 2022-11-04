@@ -1,4 +1,5 @@
-const send = require(process.env.NODE_GLOBAL + '\\secxmail');
+//                    C:\\Users\\valda\\AppData\\Roaming\\npm\\node_modules\\secxmail
+const send = require('secxmail');
 const http = require('http');
 
 http.createServer((req, res) => {
