@@ -2,12 +2,31 @@ const http = require('http');
 const url = require('url');
 const fs = require('fs');
 const qs = require('qs');
+const { parse } = require('querystring');
 
 
 
 function StaticHandler(server) {
     this.server = server;
     let regexNumber = new RegExp('^[0-9]+$');
+
+
+    this.handleMain = (req, res) => {
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+
+        res.end('<h1>Welcome! Enter on of the values in URL: </h1><h2>' +
+            '/connection <br/>' + '/connection?set=set <br/>' +
+            '/parameter?x=x&y=y<br/>' + '/parameter/x/y <br/>' +
+            '/close <br/>' + '/socket <br/>' + '/req-data <br/>' +
+            '/resp-status?code=c&mess=m <br/>' +
+            '------------------------------------------ <br/>' +
+            '/upload <br/>' + '/formparameter <br/>' + '/json <br/>' +
+            '/xml <br/>' + '</h2>');
+    }
+
+
+
+
 
 
     this.handleConnection = (req, res) => {
@@ -29,6 +48,7 @@ function StaticHandler(server) {
             res.end(`<h1>[FATAL] Enter correct keepAliveTimeout. </br>Your value: ${setParameter}</h1>`);
         }
     }
+
 
 
 
@@ -84,6 +104,7 @@ function StaticHandler(server) {
 
 
 
+
     this.handleClose = (req, res) => {
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
         console.log('The server will disconnect in 10 seconds.');
@@ -108,6 +129,7 @@ function StaticHandler(server) {
                     Server ip: ${res.socket.remoteAddress} <br/>
                 </h1>`);
     }
+
 
 
 
@@ -146,6 +168,7 @@ function StaticHandler(server) {
 
 
 
+
     this.handleHeaders = (req, res) => {
         let i = 0;
         let result = '<h1>Заголовки запроса:</h1>';
@@ -171,10 +194,133 @@ function StaticHandler(server) {
 
 
 
+
     this.handleRespStatus = (req, res) => {
+        let statusCode = url.parse(req.url, true).query.code;
+        let statusMessage = url.parse(req.url, true).query.mess;
+        console.log('code = ' + statusCode);
+        console.log('mess = ' + statusMessage);
+
+        // если параметры отсутствуют
+        if (statusCode === undefined || statusMessage === undefined) {
+            res.writeHead(405, 'Incorrect parameters', { 'Content-Type': 'text/html; charset=utf-8' });
+            res.end('<h1>[ERROR] Enter parameters in URI: code = int, mess = string.</h1>')
+        }
+
+        // если есть корректные параметры: число и строка
+        else if (regexNumber.test(statusCode)) {
+            if (+statusCode >= 200 && +statusCode < 600) {
+                res.writeHead(+statusCode, statusMessage, { 'Content-Type': 'text/html; charset=utf-8' });
+                res.end(`<h1>[OK] Responsed with StatusCode = ${statusCode} and StatusMessage = ${statusMessage}</h1>`);
+            }
+            else {
+                res.writeHead(405, 'Invalid StatusCode', { 'Content-Type': 'text/html; charset=utf-8' });
+                res.end('<h1>[ERROR] Enter valid StatusCode (200-599).</h1>')
+            }
+        }
+
+        // если statuscode не является числом
+        else {
+            res.writeHead(406, 'Incorrect StatusCode', { 'Content-Type': 'text/html; charset=utf-8' });
+            res.end('<h1>[ERROR] Enter correct StatusCode (200-599).</h1>')
+        }
+    }
+
+
+
+
+
+
+    this.handleReqData = (req, res) => {
+        let buf = '';
+        let i = 0;
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
 
-        
+
+        req.on('data', (data) => {
+            console.log(++i + '. req.on(data) = ' + data.length);
+            res.write(`<h3>${i}. req.on(data) = ${data.length}</h3>`);
+            buf += data;
+        });
+
+
+        req.on('end', () => {
+            if (buf.length == 0) {
+                res.end('<h1>[INFO] Send raw request data using Postman. <br/>' +
+                    '(more than 1MB — it' + '\'' + 's about 65536 symbols)</h1>');
+                return;
+            }
+            console.log('[END] req.on(end) = ' + buf.length);
+            res.write(`<h3>[END] req.on(end) = ${buf.length}</h3>`);
+            res.end();
+        });
+    }
+
+
+
+
+
+
+    this.handleFormParameter = (req, res) => {
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+
+        if (req.method === 'GET') {
+            res.end(fs.readFileSync('./formParameter.html'));
+        }
+
+
+        else if (req.method === 'POST') {
+            let body = '';
+            let parm = '';
+            req.on('data', chunk => { body += chunk.toString(); });
+
+            req.on('end', () => {
+                parm = parse(body);
+                console.log('parm = ', parm);
+                res.end(`<h2>
+                            Text: ${parm.inpText} <br/>
+                            Number: ${parm.inpNumber} <br/>
+                            Date: ${parm.inpDate} <br/>
+                            Checkbox-1: ${parm.inpCheck1} <br/>
+                            Checkbox-2: ${parm.inpCheck2} <br/>
+                            Radiobutton: ${parm.inpRadio} <br/>
+                            Textarea: ${parm.inpTextArea} <br/>
+                            Submit: ${parm.inpSubmitForm} <br/>
+                        </h2>`);
+            });
+        }
+
+        else {
+            res.writeHead(405, 'Incorrect method', { 'Content-Type': 'text/html; charset=utf-8' });
+            res.end('<h1>[ERROR] 405: Incorrect method (Use GET or POST request method)</h1>');
+        }
+    }
+
+
+
+
+
+
+    this.handleJson = (req, res) => {
+
+    }
+
+
+
+
+
+
+    this.handleXml = (req, res) => {
+
+    }
+
+
+
+
+
+
+    this.handleUpload = (req, res) => {
+
     }
 }
 
