@@ -3,6 +3,9 @@ const url = require('url');
 const fs = require('fs');
 const qs = require('qs');
 const { parse } = require('querystring');
+const parseString = require('xml2js').parseString;
+const xmlBuilder = require('xmlbuilder');
+const mp = require('multiparty');
 
 
 
@@ -11,6 +14,7 @@ function StaticHandler(server) {
     let regexNumber = new RegExp('^[0-9]+$');
 
 
+    // Главная страница — localhost:5000
     this.handleMain = (req, res) => {
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
 
@@ -28,7 +32,17 @@ function StaticHandler(server) {
 
 
 
+    // Ошибка при вводе URL, на которого нет обработчика
+    this.handleIncorrectURI = (req, res) => {
 
+    }
+
+
+
+
+
+
+    // Connection (с параметрами или без) — вывод и изменение keepAliveTimeout
     this.handleConnection = (req, res) => {
         let setParameter = url.parse(req.url, true).query.set;
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
@@ -54,6 +68,34 @@ function StaticHandler(server) {
 
 
 
+    // Headers — вывести заголовки, в т.ч. самостоятельно созданный
+    this.handleHeaders = (req, res) => {
+        let i = 0;
+        let result = '<h1>Заголовки запроса:</h1>';
+        for (key in req.headers) {
+            result += `${++i}. ${key}: ${req.headers[key]}<br/>`;
+        }
+
+        i = 0;
+        result += '<br/><h1>Заголовки ответа:</h1>';
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.setHeader('Gay-List', 'Anton Dimitriadi; Vlad Gud');
+        let resHeaders = res.getHeaders();
+        console.log('response headers: ', resHeaders);
+        for (key in resHeaders) {
+            result += `${++i}. ${key}: ${resHeaders[key]}<br/>`;
+        }
+
+        res.writeHead(200);
+        res.end(result);
+    }
+
+
+
+
+
+
+    // Parameter (передача через query и через URL) — вывод их суммы/разности/произведения/частного
     this.handleParameter = (req, res) => {
         let xQuery = url.parse(req.url, true).query.x;
         let yQuery = url.parse(req.url, true).query.y;
@@ -105,6 +147,7 @@ function StaticHandler(server) {
 
 
 
+    // Close — закрытие сервера через 10 секунд
     this.handleClose = (req, res) => {
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
         console.log('The server will disconnect in 10 seconds.');
@@ -112,7 +155,7 @@ function StaticHandler(server) {
             console.log('Server disconnected.');
             this.server.close();
             // process.exit(0);
-        }, 1000);
+        }, 10000);
         res.end('<h1>The server will disconnect in 10 seconds.</h1>');
     }
 
@@ -120,6 +163,8 @@ function StaticHandler(server) {
 
 
 
+
+    // Socket — информация о сокетах (IP + Port)
     this.handleSocket = (req, res) => {
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
         res.end(`<h1>
@@ -135,59 +180,30 @@ function StaticHandler(server) {
 
 
 
-    this.handleFiles = (req, res) => {
-        let filename = url.parse(req.url).pathname.split('/')[2];
-
-        // если нет имени файла в URI, выводится кол-во файлов
-        if (filename === undefined) {
-            fs.readdir('./static', (err, files) => {
-                if (err) {
-                    res.end('<h1>[FATAL] Did not find ./static directory<h1>');
-                    return;
-                }
-                res.setHeader('X-static-files-count', `${files.length}`);
-                res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-                res.end(`<h1>[OK] Count of files in ./static directory: ${files.length}. 
-                        <br/>[INFO] Also check headers (F12 –> Network)</h1>`);
-            });
-        }
-
-        // если есть имя файла в URI, то пересылаем
-        else {
-            try {
-                res.end(fs.readFileSync(`static/${filename}`));
-            }
-            catch (err) {
-                res.writeHead(404, 'Resource not found', { 'Content-Type': 'text/html; charset=utf-8' });
-                res.end('<h1>[ERROR] 404: Resource not found.</h1>')
-            }
-        }
-    }
-
-
-
-
-
-
-    this.handleHeaders = (req, res) => {
+    // Req-data — визуализация порционной обработки запроса (через Postman!)
+    this.handleReqData = (req, res) => {
+        let buf = '';
         let i = 0;
-        let result = '<h1>Заголовки запроса:</h1>';
-        for (key in req.headers) {
-            result += `${++i}. ${key}: ${req.headers[key]}<br/>`;
-        }
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
 
-        i = 0;
-        result += '<br/><h1>Заголовки ответа:</h1>';
-        res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        res.setHeader('Gay-List', 'Anton Dimitriadi; Vlad Gud');
-        let resHeaders = res.getHeaders();
-        console.log('response headers: ', resHeaders);
-        for (key in resHeaders) {
-            result += `${++i}. ${key}: ${resHeaders[key]}<br/>`;
-        }
 
-        res.writeHead(200);
-        res.end(result);
+        req.on('data', (data) => {
+            console.log(++i + '. req.on(data) = ' + data.length);
+            res.write(`<h3>${i}. req.on(data) = ${data.length}</h3>`);
+            buf += data;
+        });
+
+
+        req.on('end', () => {
+            if (buf.length == 0) {
+                res.end('<h1>[INFO] Send raw request data using Postman. <br/>' +
+                    '(more than 1MB — it' + '\'' + 's about 65536 symbols)</h1>');
+                return;
+            }
+            console.log('[END] req.on(end) = ' + buf.length);
+            res.write(`<h3>[END] req.on(end) = ${buf.length}</h3>`);
+            res.end();
+        });
     }
 
 
@@ -195,6 +211,7 @@ function StaticHandler(server) {
 
 
 
+    // Resp-status — задать через параметры код ответа и сообщение ответа
     this.handleRespStatus = (req, res) => {
         let statusCode = url.parse(req.url, true).query.code;
         let statusMessage = url.parse(req.url, true).query.mess;
@@ -231,36 +248,7 @@ function StaticHandler(server) {
 
 
 
-    this.handleReqData = (req, res) => {
-        let buf = '';
-        let i = 0;
-        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-
-
-        req.on('data', (data) => {
-            console.log(++i + '. req.on(data) = ' + data.length);
-            res.write(`<h3>${i}. req.on(data) = ${data.length}</h3>`);
-            buf += data;
-        });
-
-
-        req.on('end', () => {
-            if (buf.length == 0) {
-                res.end('<h1>[INFO] Send raw request data using Postman. <br/>' +
-                    '(more than 1MB — it' + '\'' + 's about 65536 symbols)</h1>');
-                return;
-            }
-            console.log('[END] req.on(end) = ' + buf.length);
-            res.write(`<h3>[END] req.on(end) = ${buf.length}</h3>`);
-            res.end();
-        });
-    }
-
-
-
-
-
-
+    // Form-parameter — получение и вывод данных из html-формы
     this.handleFormParameter = (req, res) => {
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
 
@@ -301,8 +289,21 @@ function StaticHandler(server) {
 
 
 
+    // JSON — считать JSON из тела запроса и отправить в ответе новый JSON
     this.handleJson = (req, res) => {
+        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+        let data = '';
 
+        req.on('data', chunk => { data += chunk.toString(); });
+        req.on('end', () => {
+            data = JSON.parse(data);
+            let result = {};
+            result.__comment = "res: lab 08";
+            result.x_plus_y = data.x + data.y;
+            result.concatination_s_and_o = `${data.s}: ${data.o.name} ${data.o.surname}`;
+            result.length_m = data.m.length;
+            res.end(JSON.stringify(result, null, 2));
+        })
     }
 
 
@@ -310,8 +311,34 @@ function StaticHandler(server) {
 
 
 
+    // XML — парсинг пришедшего от клиента XML и возвращение нового XML
     this.handleXml = (req, res) => {
+        res.writeHead(200, { 'Content-Type': 'text/xml; charset=utf-8' });
+        let xmlString = '';
 
+        req.on('data', data => { xmlString += data.toString(); });
+        req.on('end', () => {
+            parseString(xmlString, (err, result) => {
+                if (err) {
+                    res.end(`<result>[ERROR] parseString returned error: ${err}</result>`);
+                    return;
+                }
+                let sum = 0;
+                let mess = '';
+                result.request.x.forEach(el => { sum += Number.parseInt(el.$.value); })
+                result.request.m.forEach(el => { mess += el.$.value; })
+
+                let xmlDoc = xmlBuilder.create('response')
+                    .att('id', +result.request.$.id + 10)
+                    .att('request', result.request.$.id);
+                xmlDoc.ele('sum', { element: 'x', sum: `${sum}` });
+                xmlDoc.ele('concat', { element: 'm', result: `${mess}` });
+
+                rc = xmlDoc.toString({ pretty: true });
+                res.writeHead(200, { 'Content-Type': 'text/xml; charset=utf-8' });
+                res.end(xmlDoc.toString({ pretty: true }));
+            });
+        })
     }
 
 
@@ -319,9 +346,69 @@ function StaticHandler(server) {
 
 
 
+    // Upload — загрузка файлов на сервер в папку static
     this.handleUpload = (req, res) => {
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
 
+        if (req.method === 'GET') {
+            res.end(fs.readFileSync('./upload.html'))
+        }
+
+        else if (req.method === 'POST') {
+            console.log('post');
+            let result = '';
+            let form = new mp.Form({ uploadDir: './static' });
+            form.on('file', (name, file) => {
+                console.log(`name = ${name}; original filename: ${file.originalFilename}; path = ${file.path}`);
+            });
+            form.on('error', err => { res.end(`<h1>[ERROR] form returned error: ${err}</h1>`) });
+            form.on('close', () => {
+                res.end('<h1>[OK] File sucessfully uploaded.</h1>');
+            });
+            form.parse(req);
+        }
+
+        else {
+            res.writeHead(405, 'Incorrect method', { 'Content-Type': 'text/html; charset=utf-8' });
+            res.end('<h1>[ERROR] 405: Incorrect method (Use GET or POST request method)</h1>');
+        }
+    }
+
+
+
+
+
+
+    // Files — вывод кол-ва файлов или получение файла по URI
+    this.handleFiles = (req, res) => {
+        let filename = url.parse(req.url).pathname.split('/')[2];
+
+        // если нет имени файла в URI, выводится кол-во файлов
+        if (filename === undefined) {
+            fs.readdir('./static', (err, files) => {
+                if (err) {
+                    res.end('<h1>[FATAL] Unable to find ./static directory<h1>');
+                    return;
+                }
+                res.setHeader('X-static-files-count', `${files.length}`);
+                res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+                res.end(`<h1>[OK] Count of files in ./static directory: ${files.length}. 
+                        <br/>[INFO] Also check headers (F12 –> Network)</h1>`);
+            });
+        }
+
+        // если есть имя файла в URI, то пересылаем
+        else {
+            try {
+                res.end(fs.readFileSync(`static/${filename}`));
+            }
+            catch (err) {
+                res.writeHead(404, 'Resource not found', { 'Content-Type': 'text/html; charset=utf-8' });
+                res.end('<h1>[ERROR] 404: Resource not found.</h1>')
+            }
+        }
     }
 }
+
 
 module.exports = server => new StaticHandler(server);

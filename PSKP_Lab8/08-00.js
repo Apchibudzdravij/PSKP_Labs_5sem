@@ -28,6 +28,7 @@ let http_handler = (req, res) => {
             case 'files':           mod.handleFiles(req, res); break;
             case 'upload':          mod.handleUpload(req, res); break;
             case 'formparameter':   mod.handleFormParameter(req, res); break;
+            case 'upload':          mod.handleUpload(req, res); break;
             case '':                mod.handleMain(req, res); break;
             default: res.end('ty dolbaeb?'); break;
         }
