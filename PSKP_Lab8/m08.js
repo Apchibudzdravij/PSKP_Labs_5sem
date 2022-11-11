@@ -1,40 +1,33 @@
-const http = require('http');
 const url = require('url');
 const fs = require('fs');
-const qs = require('qs');
+const xmlBuilder = require('xmlbuilder');
+const multiParty = require('multiparty');
 const { parse } = require('querystring');
 const parseString = require('xml2js').parseString;
-const xmlBuilder = require('xmlbuilder');
-const mp = require('multiparty');
 
 
 
-function StaticHandler(server) {
+
+function StaticHandler(server, sockets) {
     this.server = server;
-    let regexNumber = new RegExp('^[0-9]+$');
+    this.sockets = sockets;
+    const regexNumber = new RegExp('^[0-9]+$');
 
 
     // Главная страница — localhost:5000
     this.handleMain = (req, res) => {
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
 
-        res.end('<h1>Welcome! Enter on of the values in URL: </h1><h2>' +
+        res.end('<h1>Welcome! Enter on of the values in URL: </h1>' +
+            '<h2>' +
             '/connection <br/>' + '/connection?set=set <br/>' +
-            '/parameter?x=x&y=y<br/>' + '/parameter/x/y <br/>' +
-            '/close <br/>' + '/socket <br/>' + '/req-data <br/>' +
-            '/resp-status?code=c&mess=m <br/>' +
-            '------------------------------------------ <br/>' +
+            '/headers <br/> ' + '/parameter?x=x&y=y<br/>' +
+            '/parameter/x/y <br/>' + '/close <br/>' + '/socket <br/>' +
+            '/req-data <br/>' + '/resp-status?code=c&mess=m <br/>' +
+            '----------------------------------------- <br/>' +
             '/upload <br/>' + '/formparameter <br/>' + '/json <br/>' +
-            '/xml <br/>' + '</h2>');
-    }
-
-
-
-
-
-    // Ошибка при вводе URL, на которого нет обработчика
-    this.handleIncorrectURI = (req, res) => {
-
+            '/xml <br/>' + '/files <br/>' + '/files/filename <br/>' +
+            '</h2>');
     }
 
 
@@ -78,6 +71,7 @@ function StaticHandler(server) {
 
         i = 0;
         result += '<br/><h1>Заголовки ответа:</h1>';
+        res.setHeader('Connection', 'keep-alive');
         res.setHeader('Content-Type', 'text/html; charset=utf-8');
         res.setHeader('Gay-List', 'Anton Dimitriadi; Vlad Gud');
         let resHeaders = res.getHeaders();
@@ -95,7 +89,7 @@ function StaticHandler(server) {
 
 
 
-    // Parameter (передача через query и через URL) — вывод их суммы/разности/произведения/частного
+    // Parameter (передача через query и через URI) — вывод их суммы/разности/произведения/частного
     this.handleParameter = (req, res) => {
         let xQuery = url.parse(req.url, true).query.x;
         let yQuery = url.parse(req.url, true).query.y;
@@ -104,7 +98,7 @@ function StaticHandler(server) {
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
         console.log('x = ' + xQuery + '; y = ' + yQuery);
 
-        // если параметры указаны в query
+        // если параметры указаны в параметрах (query)
         if (regexNumber.test(xQuery) && regexNumber.test(yQuery)) {
             res.end(`<h1>
                         x = ${xQuery}; y = ${yQuery} <br/>
@@ -115,7 +109,7 @@ function StaticHandler(server) {
                     </h1>`);
         }
 
-        // если параметры указаны в URI 
+        // если параметры указаны в URN (после слэша)
         else if (xRoute != 'undefined' && yRoute != 'undefined') {
             if (regexNumber.test(xRoute) && regexNumber.test(yRoute)) {
                 res.end(`<h1>
@@ -153,8 +147,10 @@ function StaticHandler(server) {
         console.log('The server will disconnect in 10 seconds.');
         setTimeout(() => {
             console.log('Server disconnected.');
+            for (const socket of this.sockets.values()) {
+                socket.destroy();
+            }
             this.server.close();
-            // process.exit(0);
         }, 10000);
         res.end('<h1>The server will disconnect in 10 seconds.</h1>');
     }
@@ -164,7 +160,7 @@ function StaticHandler(server) {
 
 
 
-    // Socket — информация о сокетах (IP + Port)
+    // Socket — информация о сокетах (Socket = IP + Port)
     this.handleSocket = (req, res) => {
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
         res.end(`<h1>
@@ -184,6 +180,7 @@ function StaticHandler(server) {
     this.handleReqData = (req, res) => {
         let buf = '';
         let i = 0;
+        res.setHeader('Transfer-Encoding', 'chunked');  // введите другие значения (compress, deflate, gzip) для наглядности
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
 
 
@@ -197,7 +194,7 @@ function StaticHandler(server) {
         req.on('end', () => {
             if (buf.length == 0) {
                 res.end('<h1>[INFO] Send raw request data using Postman. <br/>' +
-                    '(more than 1MB — it' + '\'' + 's about 65536 symbols)</h1>');
+                    `(more than 1MB — it\'s about 65536 symbols)</h1>`);
                 return;
             }
             console.log('[END] req.on(end) = ' + buf.length);
@@ -231,14 +228,14 @@ function StaticHandler(server) {
                 res.end(`<h1>[OK] Responsed with StatusCode = ${statusCode} and StatusMessage = ${statusMessage}</h1>`);
             }
             else {
-                res.writeHead(405, 'Invalid StatusCode', { 'Content-Type': 'text/html; charset=utf-8' });
+                res.writeHead(406, 'Invalid StatusCode', { 'Content-Type': 'text/html; charset=utf-8' });
                 res.end('<h1>[ERROR] Enter valid StatusCode (200-599).</h1>')
             }
         }
 
         // если statuscode не является числом
         else {
-            res.writeHead(406, 'Incorrect StatusCode', { 'Content-Type': 'text/html; charset=utf-8' });
+            res.writeHead(407, 'Incorrect StatusCode', { 'Content-Type': 'text/html; charset=utf-8' });
             res.end('<h1>[ERROR] Enter correct StatusCode (200-599).</h1>')
         }
     }
@@ -279,8 +276,8 @@ function StaticHandler(server) {
         }
 
         else {
-            res.writeHead(405, 'Incorrect method', { 'Content-Type': 'text/html; charset=utf-8' });
-            res.end('<h1>[ERROR] 405: Incorrect method (Use GET or POST request method)</h1>');
+            res.writeHead(408, 'Incorrect method', { 'Content-Type': 'text/html; charset=utf-8' });
+            res.end('<h1>[ERROR] 408: Incorrect method (Use GET or POST request method)</h1>');
         }
     }
 
@@ -298,7 +295,7 @@ function StaticHandler(server) {
         req.on('end', () => {
             data = JSON.parse(data);
             let result = {};
-            result.__comment = "res: lab 08";
+            result._comment = "res: lab 08";
             result.x_plus_y = data.x + data.y;
             result.concatination_s_and_o = `${data.s}: ${data.o.name} ${data.o.surname}`;
             result.length_m = data.m.length;
@@ -320,7 +317,7 @@ function StaticHandler(server) {
         req.on('end', () => {
             parseString(xmlString, (err, result) => {
                 if (err) {
-                    res.end(`<result>[ERROR] parseString returned error: ${err}</result>`);
+                    res.end(`<result>[FATAL] parseString returned error: ${err}</result>`);
                     return;
                 }
                 let sum = 0;
@@ -333,8 +330,8 @@ function StaticHandler(server) {
                     .att('request', result.request.$.id);
                 xmlDoc.ele('sum', { element: 'x', sum: `${sum}` });
                 xmlDoc.ele('concat', { element: 'm', result: `${mess}` });
-
                 rc = xmlDoc.toString({ pretty: true });
+
                 res.writeHead(200, { 'Content-Type': 'text/xml; charset=utf-8' });
                 res.end(xmlDoc.toString({ pretty: true }));
             });
@@ -356,8 +353,7 @@ function StaticHandler(server) {
 
         else if (req.method === 'POST') {
             console.log('post');
-            let result = '';
-            let form = new mp.Form({ uploadDir: './static' });
+            let form = new multiParty.Form({ uploadDir: './static' });
             form.on('file', (name, file) => {
                 console.log(`name = ${name}; original filename: ${file.originalFilename}; path = ${file.path}`);
             });
@@ -369,8 +365,8 @@ function StaticHandler(server) {
         }
 
         else {
-            res.writeHead(405, 'Incorrect method', { 'Content-Type': 'text/html; charset=utf-8' });
-            res.end('<h1>[ERROR] 405: Incorrect method (Use GET or POST request method)</h1>');
+            res.writeHead(408, 'Incorrect method', { 'Content-Type': 'text/html; charset=utf-8' });
+            res.end('<h1>[ERROR] 408: Incorrect method (Use GET or POST request method)</h1>');
         }
     }
 
@@ -408,7 +404,29 @@ function StaticHandler(server) {
             }
         }
     }
+
+
+
+
+
+
+    // Ошибка при вводе URL, на которого нет обработчика
+    this.handleIncorrectURL = (req, res) => {
+        res.writeHead(410, 'Incorrect URL', { 'Content-Type': 'text/html; charset=utf-8' });
+        res.end('<h1>[ERROR] Enter one of the correct URLs (visit localhost:5000).</h1>')
+    }
+
+
+
+
+
+
+    // Ошибка при неверном методе запроса (не GET/POST)
+    this.handleIncorrectMethod = (req, res) => {
+        res.writeHead(409, 'Incorrect method', { 'Content-Type': 'text/html; charset=utf-8' });
+        res.end('<h1>[ERROR] Incorrect request method. Use GET or POST (visit localhost:5000 for more info).</h1>')
+    }
 }
 
 
-module.exports = server => new StaticHandler(server);
+module.exports = (server, sockets) => new StaticHandler(server, sockets);
