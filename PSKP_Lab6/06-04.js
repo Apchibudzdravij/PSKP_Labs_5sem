@@ -1,4 +1,5 @@
-//                    C:\\Users\\valda\\AppData\\Roaming\\npm\\node_modules\\secxmail
+//                      'C:\\Users\\valda\\AppData\\Roaming\\npm\\node_modules\\secxmail'
+//                      `${process.env.NODE_GLOBAL}\\secxmail`
 const send = require('secxmail');
 const http = require('http');
 

@@ -164,10 +164,10 @@ function StaticHandler(server, sockets) {
     this.handleSocket = (req, res) => {
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
         res.end(`<h1>
-                    Client port: ${res.socket.localPort} <br/>
-                    Client ip: ${res.socket.localAddress} <br/>
-                    Server port: ${res.socket.remotePort} <br/>
-                    Server ip: ${res.socket.remoteAddress} <br/>
+                    Client port: ${res.socket.remotePort} <br/>
+                    Client ip: ${res.socket.remoteAddress} <br/>
+                    Server port: ${res.socket.localPort} <br/>
+                    Server ip: ${res.socket.localAddress} <br/>
                 </h1>`);
     }
 
