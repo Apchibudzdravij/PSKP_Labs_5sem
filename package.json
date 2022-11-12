@@ -6,10 +6,12 @@
     "multiparty": "^4.2.3",
     "nodemailer": "^6.8.0",
     "nodemon": "^2.0.20",
+    "querystring": "^0.2.1",
     "secxmail": "^1.0.3",
     "sendmail": "^1.6.1",
     "xhr2": "^0.2.1",
-    "xml2js": "^0.4.23"
+    "xml2js": "^0.4.23",
+    "xmlbuilder": "^15.1.1"
   },
   "devDependencies": {
     "@types/node": "^18.11.9"
