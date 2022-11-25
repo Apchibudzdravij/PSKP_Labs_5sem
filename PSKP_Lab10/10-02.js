@@ -3,7 +3,7 @@ let k = 0;
 
 
 setTimeout(() => {
-    const webSocketClient = new WebSocket('ws:localhost:4000/wsserver', {transports: ['websocket']});
+    const webSocketClient = new WebSocket('ws://localhost:4000/wsserver', { transports: ['websocket'] });
     webSocketClient.on('open', () => {
         console.log('[INFO] Socket opened.');
 

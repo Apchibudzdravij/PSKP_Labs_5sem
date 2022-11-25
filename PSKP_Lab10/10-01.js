@@ -32,7 +32,7 @@ let k = 0;
 let n = 0;
 
 
-const webSocketServer = new WebSocket.Server({ port: 4000, host: 'localhost', path: '/wsserver' }, {transports: ['websocket']});
+const webSocketServer = new WebSocket.Server({ port: 4000, host: 'localhost', path: '/wsserver' }, { transports: ['websocket'] });
 webSocketServer.on('connection', ws => {
     console.log('[INFO] Client connected.');
     ws.on('message', message => {
