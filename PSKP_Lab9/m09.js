@@ -11,8 +11,6 @@ function ServerModule(server) {
     this.server = server;
 
 
-
-
     // Task #1:  statusCode, statusMessage, socket info, response body
     this.handleStatusAndSocket = (req, res) => {
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
@@ -142,8 +140,20 @@ function ServerModule(server) {
 
 
 
+    // Task #6:  Get file from static directory (GET)
+    this.handleGetFile = (req, res) => {
+        let regexFile = new RegExp(`^\/8\/[a-zA-Z0-9]+\.[a-zA-Z]+$`);
 
-
+        if (regexFile.test(url.parse(req.url).pathname)) {
+            try {
+                res.end(fs.readFileSync('static/' + url.parse(req.url, true).pathname.split('/')[2]));
+            }
+            catch {
+                res.writeHead(404, 'Resource not found', { 'Content-Type': 'text/html; charset=utf-8' });
+                res.end('<h1> [ERROR] 404: Resource not found. </h1>')
+            }
+        }
+    }
 }
 
 
