@@ -7,19 +7,19 @@ const mod = require('./m09')(server);
 let http_handler = (req, res) => {
     let pathName = url.parse(req.url).pathname;
 
-
     if (req.method === 'GET') {
         switch (pathName) {
             case '/1': mod.handleStatusAndSocket(req, res); break;
-            case '/2': mod.handleParametersGet(req, res); break;
+            case '/2': mod.handleParametersGet(req, res);   break;
         }
     }
     else if (req.method === 'POST') {
         switch (pathName) {
-            case '/3': mod.handleParametersPost(req, res); break;
-            case '/4': mod.handleJson(req, res); break;
-            case '/5': mod.handleXml(req, res); break;
-            case '/6': mod.handleTextFile(req, res); break;
+            case '/3': mod.handleParametersPost(req, res);  break;
+            case '/4': mod.handleJson(req, res);            break;
+            case '/5': mod.handleXml(req, res);             break;
+            case '/6': mod.handleUploadFile(req, res);      break;
+            case '/7': mod.handleUploadFile(req, res);      break;
         }
     }
 }

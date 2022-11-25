@@ -108,7 +108,7 @@ function ServerModule(server) {
 
 
     // Task #6:  File.txt (POST)
-    this.handleTextFile = (req, res) => {
+    this.handleUploadFile = (req, res) => {
         let result = '';
         let form = new multiParty.Form({ uploadDir: './static' });
 
@@ -138,9 +138,13 @@ function ServerModule(server) {
 
         form.parse(req);
     }
+
+
+
+
+
+
 }
-
-
 
 
 
