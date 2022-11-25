@@ -24,21 +24,36 @@ const options = {
 }
 
 
-const req = http.request(options, res => {
-    let data = '';
-    console.log(`Response status: ${res.statusCode} ${res.statusMessage}`);
-    res.on('data', chunk => { data += chunk; })
-    res.on('end', () => {
-        console.log(`Response body (end):\n${data}\n\n`);
-        parseString(data, (err, str) => {
-            if (err) console.log('[FATAL] XML parse error');
-            else {
-                console.log('str = ', str);
-                console.log('str.result = ', str.result);
-            }
-        })
-    });
-});
+setTimeout(() => {
+    const req = http.request(options, res => {
+        let data = '';
+        let xmlObject = null;
+        console.log(`\nResponse status: ${res.statusCode} ${res.statusMessage}`);
+        res.on('data', chunk => { data += chunk; });
 
-req.on('error', e => { console.log(`[FATAL] ${e.message}\n\n`); })
-req.end(xmlDocument.toString({ pretty: true }));
+        res.on('end', () => {
+            console.log('\n--------------------------------------------\n');
+            console.log(`Response body (end): \n${data}`);
+            console.log('--------------------------------------------\n');
+
+            parseString(data, (err, parseResult) => {
+                xmlObject = parseResult;
+
+                err ? console.log('[FATAL] XML parse error') : console.log('parseString result:\n', parseResult, '\n');
+
+                parseResult.response.sum.map((e, i) => {
+                    console.log(`sum attributes:     element = ${e.$.element}, sum = ${e.$.sum}`);
+                });
+
+                parseResult.response.concat.map((e, i) => {
+                    console.log(`concat attributes:  element = ${e.$.element}, result = ${e.$.result}`);
+                });
+            })
+
+            console.log('\n--------------------------------------------\n');
+        });
+    });
+
+    req.on('error', e => { console.log(`[FATAL] ${e.message}\n\n`); })
+    req.end(xmlDocument.toString({ pretty: true, standalone: true }));
+}, 500);

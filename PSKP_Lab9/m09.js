@@ -110,27 +110,33 @@ function ServerModule(server) {
     // Task #6:  File.txt (POST)
     this.handleTextFile = (req, res) => {
         let result = '';
-        let form = new multiParty.Form({ uploadDir: '/' });
-        form.parse(req);
+        let form = new multiParty.Form({ uploadDir: './static' });
+
         form.on('field', (name, field) => {
-            console.log('---- got a field:');
-            console.log(name, field);
-            result += `<br/>${name} = ${field}`;
+            console.log('-------------------  FIELD  -------------------');
+            console.log(field);
+            result += `<br/> '${name}' = ${field}`;
         });
+
         form.on('file', (name, file) => {
-            console.log('---- got a file:');
+            console.log('-------------------  FILE  -------------------');
             console.log(name, file);
-            result += `<br/>${name} = original name: ${file.originalFilename}; path: ${file.path}`;
+            result += `<br/> '${name}': Original filename – ${file.originalFilename}, Filepath – ${file.path}`;
         });
+
         form.on('error', (err) => {
-            res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.end('<h2>form error</h2>');
+            res.writeHead(500, { 'Content-Type': 'text/html' });
+            console.log(' [ERROR] ', err.message);
+            res.end('<h2> [ERROR] Form error. </h2>');
         });
+
         form.on('close', () => {
             res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.write('<h2>success! form data:</h2>');
+            res.write('<h2> [OK] Form data: </h2>');
             res.end(result);
         });
+
+        form.parse(req);
     }
 }
 

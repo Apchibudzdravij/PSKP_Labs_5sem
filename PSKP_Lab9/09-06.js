@@ -3,10 +3,10 @@ const fs = require('fs');
 
 let bound = 'qweqweqwe';
 let body = `--${bound}\r\n`;
-body += 'Content-Disposition: form-data; name="file"; filename="MyFile.txt"\r\n';
+body += 'Content-Disposition: form-data; name="fileUpload"; filename="MyFile.txt"\r\n';
 body += 'Content-Type: text/plain\r\n\r\n';
 body += fs.readFileSync('./MyFile.txt');
-body += `\r\n--${bound}--\r\n`;
+body += `\r\n--${bound}--`;
 
 
 let options = {
@@ -18,17 +18,20 @@ let options = {
 }
 
 
-const req = http.request(options, (res) => {
-    console.log(`res.response (statusCode) = ${res.statusCode}`);
+setTimeout(() => {
+    const req = http.request(options, (res) => {
+        let data = '';
 
-    let data = '';
-    res.on('data', (chunk) => {
-        console.log(`http.request: data: body = ${data += chunk.toString('utf8')}`);
-    });
-    res.on('end', () => {
-        console.log(`http.request: end: body = ${data}`);
-    });
-});
+        console.log(`\nResponse status: ${res.statusCode} ${res.statusMessage}\n`);
+        console.log('------------------------------------------------------------------------\n');
+        res.on('data', chunk => { console.log(`Response body (data): ${data += chunk.toString('utf8')}`); });
 
-req.on('error', e => { console.log(`[FATAL] ${e.message}\n\n`); })
-req.end(body);
+        res.on('end', () => {
+            console.log('\n------------------------------------------------------------------------\n');
+            console.log(`Response body (end): ${data}\n`);
+        });
+    });
+
+    req.on('error', e => { console.log(`[FATAL] ${e.message}\n\n`); })
+    req.end(body);
+}, 500);
