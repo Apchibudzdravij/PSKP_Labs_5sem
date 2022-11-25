@@ -154,6 +154,22 @@ function ServerModule(server) {
             }
         }
     }
+
+
+
+
+    // Default responses
+    this.handleDefaultResponse = (req, res) => {
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+
+        if (req.method === 'GET') {
+            res.end('<h1>Visit localhost:5000 /1, /2 or /8 URN.</h1>');
+        }
+        else if (req.method === 'POST') {
+            res.end('<h1>Visit localhost:5000 /3 – /7 URN.</h1>');
+        }
+    }
+
 }
 
 

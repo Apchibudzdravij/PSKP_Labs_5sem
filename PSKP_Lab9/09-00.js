@@ -12,6 +12,7 @@ let http_handler = (req, res) => {
             case '1': mod.handleStatusAndSocket(req, res); break;
             case '2': mod.handleParametersGet(req, res);   break;
             case '8': mod.handleGetFile(req, res);         break;
+            default:  mod.handleDefaultResponse(req, res); break;
         }
     }
     else if (req.method === 'POST') {
@@ -21,6 +22,7 @@ let http_handler = (req, res) => {
             case '5': mod.handleXml(req, res);             break;
             case '6': mod.handleUploadFile(req, res);      break;
             case '7': mod.handleUploadFile(req, res);      break;
+            default:  mod.handleDefaultResponse(req, res); break;
         }
     }
     else {
