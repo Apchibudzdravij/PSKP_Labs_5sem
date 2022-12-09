@@ -9,13 +9,14 @@ const options = {
     method: 'GET'
 }
 
+setTimeout(() => {
+    const req = http.request(options, res => {
+        let data = '';
+        console.log(`Response status:       ${res.statusCode} ${res.statusMessage}`);
+        res.on('data', chunk => { console.log(`Response body (data):  ${data += chunk.toString('utf8')}`); })
+        res.on('end', () => { console.log(`Response body (end):   ${data}\n\n`); });
+    });
 
-const req = http.request(options, res => {
-    let data = '';
-    console.log(`Response status:       ${res.statusCode} ${res.statusMessage}`);
-    res.on('data', chunk => { console.log(`Response body (data):  ${data += chunk.toString('utf8')}`); })
-    res.on('end', () => { console.log(`Response body (end):   ${data}\n\n`); });
-});
-
-req.on('error', e => { console.log(`[FATAL] ${e.message}\n\n`); })
-req.end();
+    req.on('error', e => { console.log(`[FATAL] ${e.message}\n\n`); })
+    req.end();
+}, 500);

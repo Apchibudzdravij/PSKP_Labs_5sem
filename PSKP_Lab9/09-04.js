@@ -21,13 +21,14 @@ const options = {
     }
 }
 
+setTimeout(() => {
+    const req = http.request(options, res => {
+        let data = '';
+        console.log(`Response status:  ${res.statusCode} ${res.statusMessage}`);
+        res.on('data', chunk => { data += chunk.toString('utf8'); })
+        res.on('end', () => { console.log(`Response body (end):\n${data}\n\n`); });
+    });
 
-const req = http.request(options, res => {
-    let data = '';
-    console.log(`Response status:  ${res.statusCode} ${res.statusMessage}`);
-    res.on('data', chunk => { data += chunk.toString('utf8'); })
-    res.on('end', () => { console.log(`Response body (end):\n${data}\n\n`); });
-});
-
-req.on('error', e => { console.log(`[FATAL] ${e.message}\n\n`); })
-req.end(jsonObject);
+    req.on('error', e => { console.log(`[FATAL] ${e.message}\n\n`); })
+    req.end(jsonObject);
+}, 500);

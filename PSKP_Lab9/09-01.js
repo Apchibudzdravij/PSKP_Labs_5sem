@@ -7,18 +7,19 @@ const options = {
     method: 'GET'
 }
 
+setTimeout(() => {
+    const req = http.request(options, res => {
+        console.log(`Request method:  ${req.method}`);
+        console.log(`Status code:     ${res.statusCode}`);
+        console.log(`Status message:  ${res.statusMessage}`);
+        console.log(`Server IP:       ${res.socket.remoteAddress}`);
+        console.log(`Server port:     ${res.socket.remotePort}`);
 
-const req = http.request(options, res => {
-    console.log(`Request method:  ${req.method}`);
-    console.log(`Status code:     ${res.statusCode}`);
-    console.log(`Status message:  ${res.statusMessage}`);
-    console.log(`Server IP:       ${res.socket.remoteAddress}`);
-    console.log(`Server port:     ${res.socket.remotePort}`);
+        let data = '';
+        res.on('data', chunk => { console.log(`Response body (data): ${data += chunk.toString('utf8')}`); })
+        res.on('end', () => { console.log(`Response body (end):  ${data}\n\n`); });
+    });
 
-    let data = '';
-    res.on('data', chunk => { console.log(`Response body (data): ${data += chunk.toString('utf8')}`); })
-    res.on('end', () => { console.log(`Response body (end):  ${data}\n\n`); });
-});
-
-req.on('error', e => { console.log(`[FATAL] ${e.message}\n\n`); })
-req.end();
+    req.on('error', e => { console.log(`[FATAL] ${e.message}\n\n`); })
+    req.end();
+}, 500);
