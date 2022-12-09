@@ -1,4 +1,3 @@
-const { count } = require('console');
 const WebSocket = require('ws');
 let counter = 0;
 
@@ -20,8 +19,6 @@ wsServer.on('connection', ws => {
     ws.on('pong', data => {
         console.log(`on pong: ${data.toString()}`);
     });
-
-
 
     ws.on('message', data => {
         console.log('on message: ', data.toString());

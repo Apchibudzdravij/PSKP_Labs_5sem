@@ -8,6 +8,8 @@
     "nodemailer": "^6.8.0",
     "nodemon": "^2.0.20",
     "querystring": "^0.2.1",
+    "rpc": "^3.3.3",
+    "rpc-websockets": "^7.5.0",
     "secxmail": "^1.0.3",
     "sendmail": "^1.6.1",
     "ws": "^8.11.0",
