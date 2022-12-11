@@ -5,11 +5,11 @@ let ws = new rpcClient('ws://localhost:4000/');
 
 let h = (x = ws) => async.parallel({
     'square[3]': cb => { ws.call('square', [3]).catch(e => cb(e, null)).then(r => cb(null, r)); },
-    'square[5,4]': cb => { ws.call('square', [5, 4]).catch(e => cb(e, null)).then(r => cb(null, r)); },
+    'square[5, 4]': cb => { ws.call('square', [5, 4]).catch(e => cb(e, null)).then(r => cb(null, r)); },
     'sum[2]': cb => { ws.call('sum', [2]).catch(e => cb(e, null)).then(r => cb(null, r)); },
-    'sum[2,4,6,8,10]': cb => { ws.call('sum', [2, 4, 6, 8, 10]).catch(e => cb(e, null)).then(r => cb(null, r)); },
+    'sum[2, 4, 6, 8, 10]': cb => { ws.call('sum', [2, 4, 6, 8, 10]).catch(e => cb(e, null)).then(r => cb(null, r)); },
     'mul[3]': cb => { ws.call('mul', [3]).catch(e => cb(e, null)).then(r => cb(null, r)); },
-    'mul[3,5,7,9,11,13]': cb => { ws.call('mul', [3, 5, 7, 9, 11, 13]).catch(e => cb(e, null)).then(r => cb(null, r)); },
+    'mul[3, 5, 7, 9, 11, 13]': cb => { ws.call('mul', [3, 5, 7, 9, 11, 13]).catch(e => cb(e, null)).then(r => cb(null, r)); },
     'fib[1]': cb => {
         ws.login({ login: 'root', password: '2233' }).then(login => {
             ws.call('fib', [1]).catch(e => cb(e, null)).then(r => cb(null, r));
@@ -42,9 +42,11 @@ let h = (x = ws) => async.parallel({
     }
 }, (error, result) => {
     if (error)
-        console.log('[ERROR]: ', error);
+        console.log('\n[ERROR]: ', error);
     else
-        console.log('[OK] Result: ', result);
+        console.log('\n[OK] Result =', result);
     ws.close();
 });
+
+
 ws.on('open', h);

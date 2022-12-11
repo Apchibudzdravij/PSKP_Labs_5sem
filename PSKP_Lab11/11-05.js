@@ -1,7 +1,7 @@
 const rpcServer = require('rpc-websockets').Server;
 const server = new rpcServer({ port: 4000, host: 'localhost' });
 server.setAuth(l => l.login === 'root' && l.password === '2233');
-
+console.log();
 
 server.register('sum', params => {
     let sum = 0;

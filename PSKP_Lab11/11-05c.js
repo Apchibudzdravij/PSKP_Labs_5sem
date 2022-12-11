@@ -5,8 +5,9 @@ let ws = new rpcClient('ws://localhost:4000/');
 
 ws.on('open', () => {
     ws.login({ login: 'root', password: '2233' })
-        .then(async login => { await calculate() });
+        .then(async login => { await calculate(); });
 });
+
 
 async function calculate() {
     console.log('\nsum + fib * mul = ' +
