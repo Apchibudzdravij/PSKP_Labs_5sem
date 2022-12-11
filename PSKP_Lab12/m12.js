@@ -9,7 +9,7 @@ function FilesModule(serverWS) {
     this.serverWS = serverWS;
     const filePath = 'StudentList.json';
     const backupPath = 'backup';
-    let studentList = JSON.parse(fs.readFileSync(filePath));
+    let studentList = JSON.parse(fs.readFileSync(filePath, "utf8"));
 
 
 
@@ -267,7 +267,7 @@ function FilesModule(serverWS) {
         });
         fs.readdir(backupPath, (error, files) => {
             if (error)
-                this.ErrorJsonResponse(res, 15, `Cannot acces directory ${backupPath}.`);
+                this.ErrorJsonResponse(res, 15, `Cannot access directory ${backupPath}.`);
             else {
                 for (let i = 0; i < files.length; i++) {
                     fs.watch((backupPath + '/' + files[i]), (eventType, filename) => {
