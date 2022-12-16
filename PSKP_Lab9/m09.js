@@ -1,5 +1,6 @@
 const url = require('url');
 const fs = require('fs');
+const qs = require('qs');
 const xmlBuilder = require('xmlbuilder');
 const multiParty = require('multiparty');
 const { parse } = require('querystring');
@@ -38,15 +39,18 @@ function ServerModule(server) {
 
     // Task #3:  POST-parameters
     this.handleParametersPost = (req, res) => {
-        let query = url.parse(req.url, true).query
-        let parameters = '';
+        let result = '';
+        req.on('data', data => { result += data; })
 
-        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-        res.write('<h2> POST-parameters </h2>  ');
-        for (key in query) {
-            parameters += `${key} = ${query[key]} <br/> `;
-        }
-        res.end(parameters);
+        req.on('end', () => {
+            let o = qs.parse(result);
+            for (let key in o) {
+                result += `${key} = ${o[key]} `;
+            }
+            res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+            res.write('<h2> POST-parameters </h2>  ');
+            res.end(result);
+        })
     }
 
 

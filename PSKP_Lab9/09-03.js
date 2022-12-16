@@ -1,12 +1,13 @@
 const http = require('http');
-const qs = require('querystring');
+const qs = require('qs');
 const parameters = qs.stringify({ x: 3, y: 4, s: 'hello' });
 
 const options = {
     host: '127.0.0.1',
-    path: `/3${parameters}`,
+    path: `/3`,
     port: 5000,
-    method: 'POST'
+    method: 'POST',
+    headers: { 'Content-type': 'application/x-www-form-urlencoded' }
 }
 
 setTimeout(() => {

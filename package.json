@@ -8,6 +8,7 @@
     "multiparty": "^4.2.3",
     "nodemailer": "^6.8.0",
     "nodemon": "^2.0.20",
+    "qs": "^6.11.0",
     "querystring": "^0.2.1",
     "rpc": "^3.3.3",
     "rpc-websockets": "^7.5.0",

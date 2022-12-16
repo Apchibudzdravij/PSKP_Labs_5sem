@@ -11,7 +11,7 @@ ws.on('open', () => {
     ws.call('mul', [3]).then(r => { console.log(`mul[3] = ${r}`) });
     ws.call('mul', [3, 5, 7, 9, 11, 13]).then(r => { console.log(`mul[3, 5, 7, 9, 11, 13] = ${r}`) });
 
-    ws.login({ login: 'root', password: '2233' }).then(login => {
+    ws.login({ login: 'root', password: '1234' }).then(login => {
         if (login) {
             ws.call('fib', [1]).catch(e => { console.log('[ERROR] fib: ', e) }).then(r => { console.log(`fib[1] = ${r}`) });
             ws.call('fib', [2]).catch(e => { console.log('[ERROR] fib: ', e) }).then(r => { console.log(`fib[2] = ${r}`) });
@@ -22,5 +22,7 @@ ws.on('open', () => {
         }
         else
             console.log('[ERROR] Incorrect login or password.');
+    }, error => {
+        console.log(error.message);
     })
 });
