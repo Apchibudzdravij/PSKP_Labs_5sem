@@ -1,41 +1,60 @@
-const { createServer } = require('http');
 const net = require('net');
 const HOST = '0.0.0.0';
-const PORT_4000 = 4000;
-const PORT_5000 = 5000;
-let sum = 0;
-let label = (pfx, port, socket) => { return `${pfx} ${socket.remoteAddress}: ${socket.remotePort} -> `; }
+const PORT = 4000;
+let label = (pfx, socket) => { return `${pfx} ${socket.remoteAddress}:${socket.remotePort} -> `; }
 let connections = new Map();
-
-let socketHandler = port => {
-    return socket => {
-        console.log(`[${port}] Client connected: ${socket.remoteAddress}:${socket.remotePort}`);
-
-        socket.on('data', data => {
-            sum += data.readInt32LE();
-            console.log(`[${port}] Server received from client: `, data, `sum = ${sum}`);
-        })
-
-        let buf = Buffer.alloc(4);
-        setTimeout(() => {
-            setInterval(() => {
-                buf.writeInt32LE(sum, 0);
-                socket.write(buf);
-            }, 5000);
-        }, 500);
-
-        socket.on('close', () => { console.log(`[${port}] Connection closed.`); })
-        socket.on('error', error => { console.log(`[ERROR] Client - ${port}: ${error.message}`); });
-    }
-}
+let server = net.createServer();
 
 
 
-net.createServer(socketHandler(PORT_4000))
-    .listen(PORT_4000, HOST)
-    .on('listening', () => { console.log(`\nStarted server: ${HOST}:${PORT_4000}`) });
+server.on('connection', socket => {
+    let intervalWriteNumber = null;
+    console.log(`Client connected:  ${socket.remoteAddress}:${socket.remotePort}\n`);
+
+    socket.id = (new Date()).toISOString();
+    connections.set(socket.id, 0);  // setting sum (2nd param) to every connection id (1st param)
+    console.log('Socket ID: ', socket.id);
 
 
-net.createServer(socketHandler(PORT_5000))
-    .listen(PORT_5000, HOST)
-    .on('listening', () => { console.log(`Started server: ${HOST}:${PORT_5000}\n`) });
+    server.getConnections((error, conn) => {
+        if (!error) {
+            console.log(label('CONNECTED', socket) + conn);
+            for (let [key, value] of connections) {
+                console.log(key, value);
+            }
+            console.log();
+        }
+    });
+
+    socket.on('data', (data) => {
+        console.log(label('DATA', socket) + data.readInt32LE());
+        connections.set(socket.id, connections.get(socket.id) + data.readInt32LE());
+        console.log(`SUM: ${connections.get(socket.id)}`);
+    })
+
+    let buf = Buffer.alloc(4);
+    setTimeout(() => {
+        intervalWriteNumber = setInterval(() => {
+            buf.writeInt32LE(connections.get(socket.id), 0);
+            socket.write(buf);
+        }, 5000);
+    }, 500);
+
+
+    socket.on('close', () => {
+        console.log(label('CLOSED', socket) + socket.id);
+        clearInterval(intervalWriteNumber);
+        connections.delete(socket.id);
+    });
+
+    socket.on('error', error => {
+        console.log(label('ERROR', socket) + error.message);
+        clearInterval(intervalWriteNumber);
+        connections.delete(socket.id);
+    });
+});
+
+
+server.on('listening', () => { console.log(`\nStarted server:    ${HOST}:${PORT}`); });
+server.on('error', error => { console.log(`[ERROR] Server: ${error.message}`); });
+server.listen(PORT, HOST);

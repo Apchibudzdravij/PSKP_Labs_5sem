@@ -14,14 +14,19 @@ server.on('connection', socket => {
     })
 
     let buf = Buffer.alloc(4);
-    setInterval(() => {
-        buf.writeInt32LE(sum, 0);
-        socket.write(buf);
-    }, 5000);
+    setTimeout(() => {
+        setInterval(() => {
+            buf.writeInt32LE(sum, 0);
+            socket.write(buf);
+        }, 5000);
+    }, 500);
+
 
     socket.on('close', () => { console.log('Connection closed.'); });
     socket.on('error', error => { console.log('[ERROR] Client: ' + error.message); });
 });
+
+
 
 server.on('error', error => { console.log('[ERROR] Server: ' + error.message); });
 server.listen(PORT, HOST);
