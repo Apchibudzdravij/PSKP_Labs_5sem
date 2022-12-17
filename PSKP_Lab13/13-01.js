@@ -7,7 +7,7 @@ net.createServer(socket => {
     console.log(`\nClient connected: ${socket.remoteAddress}:${socket.remotePort}`);
 
     socket.on('data', data => {
-        console.log(`Server data: ${data}`);
+        console.log(`Server receiver: ${data}`);
         if (!socket._destroy) {
             socket.write(`ECHO: ${data}`);
             socket.destroy();

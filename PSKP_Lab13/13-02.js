@@ -12,7 +12,7 @@ client.connect(PORT, HOST, () => {
 client.write(message);
 
 client.on('data', data => {
-    console.log(`Client data: ${data.toString()}`);
+    console.log(`Client received: ${data.toString()}`);
     client.destroy();
 });
 
