@@ -105,7 +105,7 @@ int main()
         int  libuf = 0, lobuf = 0;
         string obuf;
 
-        cout << "Enter message to send to server: ";
+        cout << "Enter message to send: ";
         getline(cin, obuf);
 
         if ((lobuf = send(cC, obuf.c_str(), strlen(obuf.c_str()) + 1, NULL)) == SOCKET_ERROR)
