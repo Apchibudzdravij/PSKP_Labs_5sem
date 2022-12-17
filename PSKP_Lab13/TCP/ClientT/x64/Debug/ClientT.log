@@ -1,3 +1,0 @@
-﻿  ClientT.cpp
-C:\Users\valda\source\repos\semester#5\ПСКП\PSKP_Lab13\TCP\ClientT\ClientT.cpp(111,12): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
-  ClientT.vcxproj -> C:\Users\valda\source\repos\semester#5\ПСКП\PSKP_Lab13\TCP\x64\Debug\ClientT.exe
