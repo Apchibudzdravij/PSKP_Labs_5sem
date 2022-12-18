@@ -21,19 +21,19 @@ let http_handler = (req, res) => {
     //  pathname:   /
     if (pathName === '') {
         switch (method) {
-            case 'GET': mod.GetAllStudents(req, res); break;
-            case 'POST': mod.InsertStudent(req, res); break;
-            case 'PUT': mod.UpdateStudent(req, res); break;
-            default: mod.ErrorIncorrectMethod(res); break;
+            case 'GET':   mod.GetAllStudents(req, res);  break;
+            case 'POST':  mod.InsertStudent(req, res);   break;
+            case 'PUT':   mod.UpdateStudent(req, res);   break;
+            default:      mod.ErrorIncorrectMethod(res); break;
         }
     }
 
     //  pathname:   /n
     else if (regexNumber.test(pathName)) {
         switch (method) {
-            case 'GET': mod.GetStudentById(req, res); break;
-            case 'DELETE': mod.DeleteStudentById(req, res); break;
-            default: mod.ErrorIncorrectMethod(res); break;
+            case 'GET':     mod.GetStudentById(req, res);    break;
+            case 'DELETE':  mod.DeleteStudentById(req, res); break;
+            default:        mod.ErrorIncorrectMethod(res);   break;
         }
     }
 
@@ -45,9 +45,9 @@ let http_handler = (req, res) => {
     //  pathname:   /backup
     else if (fullPathName === '/backup') {
         switch (method) {
-            case 'GET': mod.GetAllBackups(req, res); break;
-            case 'POST': mod.BackupStudentList(req, res); break;
-            default: mod.ErrorIncorrectMethod(res); break;
+            case 'GET':   mod.GetAllBackups(req, res);      break;
+            case 'POST':  mod.BackupStudentList(req, res);  break;
+            default:      mod.ErrorIncorrectMethod(res);    break;
         }
     }
 
