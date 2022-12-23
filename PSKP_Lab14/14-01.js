@@ -1,4 +1,5 @@
 const sql = require('mssql');
+const DB = require('./m14')();
 
 let config = {
     user: 'sa',
@@ -24,6 +25,9 @@ const pool = new sql.ConnectionPool(config, err => {
         dbreq01(pool);
         dbreq02(pool);
         dbreq03(pool);
+        DB.getFaculties().then(records => {
+            console.log(JSON.stringify(records.recordset, null, 4))
+        });
     }
 })
 
