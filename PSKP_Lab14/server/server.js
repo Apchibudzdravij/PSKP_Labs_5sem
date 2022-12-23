@@ -19,8 +19,3 @@ server.listen(5000, () => {
 }).on('error', error => {
     console.log('[ERROR] ', error.message);
 }).on('request', http_handler);
-
-
-// DB.getFaculties().then(records => {
-//     console.log(JSON.stringify(records.recordset, null, 4))
-// });
