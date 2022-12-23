@@ -40,7 +40,7 @@ insert into PULPIT   (PULPIT,    PULPIT_NAME,                                   
 insert into PULPIT   (PULPIT,    PULPIT_NAME,                                                   FACULTY )
              values  ('ПОиСОИ', 'Полиграфического оборудования и систем обработки информации ', 'ИДиП'  );
 insert into PULPIT   (PULPIT,    PULPIT_NAME,                                                   FACULTY)
-              values  ('ЛВ',      'Лесоводства',                                                 'ЛХФ') ;         
+             values  ('ЛВ',      'Лесоводства',                                                 'ЛХФ') ;         
 insert into PULPIT   (PULPIT,    PULPIT_NAME,                                                   FACULTY)
              values  ('ОВ',      'Охотоведения',                                                 'ЛХФ') ;   
 insert into PULPIT   (PULPIT,    PULPIT_NAME,                                                   FACULTY)
