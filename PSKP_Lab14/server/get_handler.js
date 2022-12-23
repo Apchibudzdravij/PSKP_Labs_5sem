@@ -8,7 +8,7 @@ const indexFilePath = './static_index.html';
 function Get_Handler(req, res) {
 
     let pathName = url.parse(req.url, true).pathname;
-    console.log(pathName);
+    console.log('GET:\t' + pathName);
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
 
 

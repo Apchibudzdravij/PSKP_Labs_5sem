@@ -190,6 +190,51 @@ function DB() {
                 .query('delete from AUDITORIUM where AUDITORIUM = @auditorium')
         });
     }
+
+
+
+
+    // ===========================================   FIND UTILS   ===========================================
+
+    this.findFaculty = faculty => {
+        return this.connPool.then(pool => {
+            return pool.request()
+                .input('faculty', sql.NVarChar, faculty)
+                .query('select * from FACULTY where faculty = @faculty')
+        });
+    }
+
+    this.findPulpit = pulpit => {
+        return this.connPool.then(pool => {
+            return pool.request()
+                .input('pulpit', sql.NVarChar, pulpit)
+                .query('select * from PULPIT where pulpit = @pulpit')
+        });
+    }
+
+    this.findSubject = subject => {
+        return this.connPool.then(pool => {
+            return pool.request()
+                .input('subject', sql.NVarChar, subject)
+                .query('select * from SUBJECT where subject = @subject')
+        });
+    }
+
+    this.findAuditorium = auditorium => {
+        return this.connPool.then(pool => {
+            return pool.request()
+                .input('auditorium', sql.NVarChar, auditorium)
+                .query('select * from AUDITORIUM where AUDITORIUM = @auditorium')
+        });
+    }
+
+    this.findAuditoriumType = audType => {
+        return this.connPool.then(pool => {
+            return pool.request()
+                .input('audType', sql.NVarChar, audType)
+                .query('select * from AUDITORIUM_TYPE where AUDITORIUM_TYPE = @audType')
+        });
+    }
 }
 
 
