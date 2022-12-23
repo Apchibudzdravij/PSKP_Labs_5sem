@@ -31,8 +31,17 @@ function Post_Handler(req, res) {
             req.on('end', () => {
                 json = JSON.parse(json);
                 console.log('INSERT:\t' + JSON.stringify(json) + '\n');
+
+                DB.findFaculty(json.FACULTY)
+                    .then(result => {
+                        if (result.recordset.length == 0) throw 'Faculty not found';
+                    })
+                    .catch(err => { error.handler(res, 421, err); });
+
                 DB.insertPulpits(json.PULPIT, json.PULPIT_NAME, json.FACULTY)
-                    .then(() => { res.end(JSON.stringify(json, null, 4)); })
+                    .then(() => {
+                        res.end(JSON.stringify(json));
+                    })
                     .catch(err => { error.handler(res, 417, err.message); });
             });
             break;
@@ -44,6 +53,14 @@ function Post_Handler(req, res) {
             req.on('end', () => {
                 json = JSON.parse(json);
                 console.log('INSERT:\t' + JSON.stringify(json) + '\n');
+
+                DB.findPulpit(json.PULPIT)
+                    .then(result => {
+                        if (result.recordset.length == 0) throw 'Pulpit not found';
+                        res.write(JSON.stringify(result.recordset, null, 4));
+                    })
+                    .catch(err => { error.handler(res, 423, err); });
+
                 DB.insertSubjects(json.SUBJECT, json.SUBJECT_NAME, json.PULPIT)
                     .then(() => { res.end(JSON.stringify(json, null, 4)); })
                     .catch(err => { error.handler(res, 418, err.message); });
@@ -70,6 +87,14 @@ function Post_Handler(req, res) {
             req.on('end', () => {
                 json = JSON.parse(json);
                 console.log('INSERT:\t' + JSON.stringify(json) + '\n');
+
+                DB.findAuditoriumType(json.AUDITORIUM_TYPE)
+                    .then(result => {
+                        if (result.recordset.length == 0) throw 'Auditorium type not found';
+                        res.write(JSON.stringify(result.recordset, null, 4));
+                    })
+                    .catch(err => { error.handler(res, 427, err); });
+
                 DB.insertAuditoriums(json.AUDITORIUM, json.AUDITORIUM_NAME, json.AUDITORIUM_CAPACITY, json.AUDITORIUM_TYPE)
                     .then(() => { res.end(JSON.stringify(json, null, 4)); })
                     .catch(err => { error.handler(res, 420, err.message); });
