@@ -17,10 +17,12 @@ let config = {
 
 
 function DB() {
+
     this.connectionPool = new sql.ConnectionPool(config).connect().then(pool => {
-        console.log('Connected database.\n');
+        console.log('[OK] Connected to database.\n');
         return pool;
     }).catch(err => console.log('[ERROR] Connection failed: ', err.message));
+
 
 
     this.getFaculties = () => {
