@@ -16,7 +16,7 @@ function DB() {
     this.connPool = new sql.ConnectionPool(config)
         .connect()
         .then(pool => {
-            console.log('[OK] Connected to database.\n');
+            // console.log('[OK] Connected to database.\n');
             return pool;
         })
         .catch(err => console.log('[ERROR] Connection to database failed: ', err.message));
