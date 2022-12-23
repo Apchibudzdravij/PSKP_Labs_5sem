@@ -21,8 +21,8 @@ function Put_Handler(req, res) {
 
                 DB.findFaculty(json.FACULTY)
                     .then(result => {
-                        if (result.recordset.length == 0) throw 'Faculty not found.';
-                        res.write(JSON.stringify(result.recordset));
+                        if (result.recordset.length == 0) throw 'Faculty not found';
+                        res.write(JSON.stringify(result.recordset, null, 4));
                     })
                     .catch(err => { error.handler(res, 421, err); });
 
@@ -42,7 +42,7 @@ function Put_Handler(req, res) {
 
                 DB.findPulpit(json.PULPIT)
                     .then(result => {
-                        if (result.recordset.length == 0) throw 'Pulpit not found.';
+                        if (result.recordset.length == 0) throw 'Pulpit not found';
                         res.write(JSON.stringify(result.recordset, null, 4));
                     })
                     .catch(err => { error.handler(res, 423, err); });
@@ -63,7 +63,7 @@ function Put_Handler(req, res) {
 
                 DB.findSubject(json.SUBJECT)
                     .then(result => {
-                        if (result.recordset.length == 0) throw 'Subject not found.';
+                        if (result.recordset.length == 0) throw 'Subject not found';
                         res.write(JSON.stringify(result.recordset, null, 4));
                     })
                     .catch(err => { error.handler(res, 425, err); });
@@ -84,7 +84,7 @@ function Put_Handler(req, res) {
 
                 DB.findAuditoriumType(json.AUDITORIUM_TYPE)
                     .then(result => {
-                        if (result.recordset.length == 0) throw 'Auditorium type not found.';
+                        if (result.recordset.length == 0) throw 'Auditorium type not found';
                         res.write(JSON.stringify(result.recordset, null, 4));
                     })
                     .catch(err => { error.handler(res, 427, err); });
@@ -105,14 +105,14 @@ function Put_Handler(req, res) {
 
                 DB.findAuditorium(json.AUDITORIUM)
                     .then(result => {
-                        if (result.recordset.length == 0) throw 'Auditorium not found.';
+                        if (result.recordset.length == 0) throw 'Auditorium not found';
                         res.write(JSON.stringify(result.recordset, null, 4));
                     })
-                    .catch(err => { error.handler(res, 420, err); });
+                    .catch(err => { error.handler(res, 429, err); });
 
                 DB.updateAuditoriums(json.AUDITORIUM, json.AUDITORIUM_NAME, json.AUDITORIUM_CAPACITY, json.AUDITORIUM_TYPE)
                     .then(() => { res.end(); })
-                    .catch(err => { error.handler(res, 420, err.message); });
+                    .catch(err => { error.handler(res, 430, err.message); });
             });
             break;
         }
