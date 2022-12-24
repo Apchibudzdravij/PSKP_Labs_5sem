@@ -38,7 +38,7 @@ server.register('fact', params => {
 server.register('fib', params => {
     if (params.length !== 1)
         return [1];
-    return fibonacci(params);
+    return fibonacci(params-1);
 }).protected();
 
 
