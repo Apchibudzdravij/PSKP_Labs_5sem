@@ -57,7 +57,6 @@ function Post_Handler(req, res) {
                 DB.findPulpit(json.PULPIT)
                     .then(result => {
                         if (result.recordset.length == 0) throw 'Pulpit not found';
-                        res.write(JSON.stringify(result.recordset, null, 4));
                     })
                     .catch(err => { error.handler(res, 423, err); });
 
@@ -91,7 +90,6 @@ function Post_Handler(req, res) {
                 DB.findAuditoriumType(json.AUDITORIUM_TYPE)
                     .then(result => {
                         if (result.recordset.length == 0) throw 'Auditorium type not found';
-                        res.write(JSON.stringify(result.recordset, null, 4));
                     })
                     .catch(err => { error.handler(res, 427, err); });
 

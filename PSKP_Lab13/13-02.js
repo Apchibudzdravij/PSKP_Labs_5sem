@@ -5,17 +5,22 @@ let client = new net.Socket();
 let message = 'Hello from 13-02.js!';
 
 
-client.connect(PORT, HOST, () => {
-    console.log(`\nConnected to server: ${client.remoteAddress}:${client.remotePort}`);
-});
+setTimeout(() => {
 
-client.write(message);
+    client.connect(PORT, HOST, () => {
+        console.log(`\nConnected to server: ${client.remoteAddress}:${client.remotePort}`);
+    });
 
-client.on('data', data => {
-    console.log(`Client received: ${data.toString()}`);
-    client.destroy();
-});
 
-client.on('close', () => { console.log(`Connection closed.`); });
+    client.write(message);
 
-client.on('error', error => { console.log(`[ERROR] ${error.message}`); });
+    client.on('data', data => {
+        console.log(`Client received: ${data.toString()}`);
+        client.destroy();
+    });
+
+    client.on('close', () => { console.log(`Connection closed.`); });
+
+    client.on('error', error => { console.log(`[ERROR] ${error.message}`); });
+
+}, 500)

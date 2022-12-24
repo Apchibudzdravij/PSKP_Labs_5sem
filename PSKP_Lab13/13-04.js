@@ -23,4 +23,4 @@ setTimeout(() => {
     client.on('data', data => { console.log(`Client received: ${data.readInt32LE()}`); });
     client.on('close', () => { console.log('Connection closed.'); });
     client.on('error', error => { console.log('[ERROR] ' + error.message); });
-}, 100);
+}, 500);
