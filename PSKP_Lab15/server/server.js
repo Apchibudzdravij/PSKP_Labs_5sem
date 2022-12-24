@@ -1,11 +1,11 @@
 const http = require('http');
-const DB = require('../database/db_module')();
 const get_handler = require('./get_handler');
 const post_handler = require('./post_handler');
 const put_handler = require('./put_handler');
 const delete_handler = require('./delete_handler');
 const error = require('./server_error_handler')();
 let server = http.createServer();
+
 
 
 
