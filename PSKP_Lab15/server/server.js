@@ -35,8 +35,8 @@ const DB = require('../database/db_module')();
 const client = new MongoClient(connectionString);
 
 
-DB.getFaculties();
-
+DB.getFaculties().then(records => console.log(JSON.stringify(records, null, 4)));
+DB.getPulpits().then(records => console.log(JSON.stringify(records, null, 4)));;
 
 
 // (async () => {
