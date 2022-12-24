@@ -7,7 +7,7 @@ const connectionString = `mongodb://localhost:27017/${databaseName}`;
 function DB() {
 
     this.client = new MongoClient(connectionString);
-    this.client.connect();  //.then(() => { console.log(`\n[OK] Succesfully connected to MongoDB, database: ${databaseName}\n`); });
+    this.client.connect(); //.then(() => { console.log(`\n[OK] Succesfully connected to MongoDB, database: ${databaseName}\n`); });
 
 
 
@@ -56,6 +56,39 @@ function DB() {
             else return record;
         });
     }
+
+
+
+
+    // =============================================   UPDATE   =============================================
+
+    this.updateFaculty = async (fields, newFacultyName) => {
+        let collection = this.client.db().collection('faculty');
+        console.log('UPDATE:\t', fields, '\n');
+
+        return collection.findOneAndUpdate(
+            { faculty: fields.faculty },
+            { $set: { faculty_name: newFacultyName } },
+            { returnDocument: 'after' }
+        );
+    }
+
+
+    this.updatePulpit = async (fields, newPulpitName, newFaculty) => {
+        let collection = this.client.db().collection('pulpit');
+        let facultyToFind = JSON.parse('{"faculty": "' + fields.faculty + '"}');
+        console.log('UPDATE:\t', fields, '\n');
+
+        await this.findOneAndThrowException('faculty', facultyToFind, false, 'There is no such faculty');
+
+        return collection.findOneAndUpdate(
+            { pulpit: fields.pulpit },
+            { $set: { pulpit_name: newPulpitName, faculty: newFaculty } },
+            { returnDocument: 'after' });
+    }
+
+
+
 
 
 
