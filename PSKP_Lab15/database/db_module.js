@@ -7,7 +7,8 @@ const connectionString = `mongodb://localhost:27017/${databaseName}`;
 function DB() {
 
     this.client = new MongoClient(connectionString);
-    this.client.connect().then(() => { console.log(`\n[OK] Succesfully connected to MongoDB, database: ${databaseName}\n`); });
+    this.client.connect()
+        //.then(() => { console.log(`\n[OK] Succesfully connected to MongoDB, database: ${databaseName}\n`); });
 
 
 

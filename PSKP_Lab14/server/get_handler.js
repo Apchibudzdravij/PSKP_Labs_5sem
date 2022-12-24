@@ -28,13 +28,13 @@ function Get_Handler(req, res) {
             break;
 
         case '/api/pulpits': DB.getPulpits()
-            .then(records => { res.end(JSON.stringify(records.recordset, null, 4)); }).
-            catch(err => { error.handler(res, 404, err.message); });
+            .then(records => { res.end(JSON.stringify(records.recordset, null, 4)); })
+            .catch(err => { error.handler(res, 404, err.message); });
             break;
 
         case '/api/subjects': DB.getSubjects()
-            .then(records => { res.end(JSON.stringify(records.recordset, null, 4)); }).
-            catch(err => { error.handler(res, 405, err.message); });
+            .then(records => { res.end(JSON.stringify(records.recordset, null, 4)); })
+            .catch(err => { error.handler(res, 405, err.message); });
             break;
 
         case '/api/auditoriumtypes': DB.getAuditoriumTypes()
