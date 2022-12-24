@@ -30,23 +30,34 @@
 
 
 const MongoClient = require('mongodb').MongoClient;
-const connectionString = 'mongodb://localhost:27017/BSTU'
+const connectionString = 'mongodb://localhost:27017'
 
 const client = new MongoClient(connectionString);
 
-client.connect()
-    .catch(err => { })
-    .then(() => {
-        console.log('\nConnected to MongoDB');
 
-        const db = client.db();
-        const collection = db.collection('pulpit');
+(async () => {
+    await client.connect().then(() => { console.log('\nConnected to MongoDB'); });
 
-        collection.find({}).toArray()
-            .then(docs => {
-                docs.forEach(el => {
-                    console.log(el.pulpit, el.pulpit_name, el.faculty);
-                    
-                });
-            })
-    })
+    let collection = client.db('BSTU').collection('faculty');
+
+    let docs = await collection.find({ faculty_name: { $regex: /техно/i } }).toArray();
+    docs.forEach(el => { console.log(el.faculty, el.faculty_name); });
+})();
+
+
+// client.connect()
+//     .catch(err => { })
+//     .then(() => {
+//         console.log('\nConnected to MongoDB');
+
+//         const db = client.db('BSTU');
+//         const collection = db.collection('pulpit');
+
+//         collection.find({}).toArray()
+//             .then(docs => {
+//                 docs.forEach(el => {
+//                     console.log(el.pulpit, el.pulpit_name, el.faculty);
+
+//                 });
+//             })
+//     })

@@ -1,5 +1,6 @@
 const MongoClient = require('mongodb').MongoClient;
-const connectionString = 'mongodb://localhost:27017/BSTU'
+const databaseName = 'BSTU';
+const connectionString = `mongodb://localhost:27017/${databaseName}`;
 
 
 function DB() {
