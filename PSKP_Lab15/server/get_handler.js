@@ -8,7 +8,7 @@ const DB = require('../database/db_module')();
 function Get_Handler(req, res) {
 
     let pathName = url.parse(req.url, true).pathname;
-    console.log('GET:\t ' + pathName);
+    console.log('\nGET:\t ' + pathName);
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
 
 

@@ -20,7 +20,7 @@ function Put_Handler(req, res) {
             req.on('end', () => {
                 json = JSON.parse(json);
                 DB.updateFaculty(json, json.faculty_name)
-                    .then(records => res.end(JSON.stringify(records)))
+                    .then(records => res.end(JSON.stringify(records, null, 4)))
                     .catch(err => { error.handler(res, 415, err); });
             });
             break;
@@ -32,7 +32,7 @@ function Put_Handler(req, res) {
             req.on('end', () => {
                 json = JSON.parse(json);
                 DB.updatePulpit(json, json.pulpit_name, json.faculty)
-                    .then(records => res.end(JSON.stringify(records)))
+                    .then(records => res.end(JSON.stringify(records, null, 4)))
                     .catch(err => { error.handler(res, 416, err); });
             });
             break;

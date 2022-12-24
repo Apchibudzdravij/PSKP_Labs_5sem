@@ -15,7 +15,8 @@ function DB() {
 
     this.getFaculties = async () => { return await this.client.db().collection('faculty').find({}).toArray(); }
 
-    this.getPulpits = async () => { return await this.client.db().collection('pulpit').find({}).toArray(); }
+    this.getPulpits  =  async () => { return await this.client.db().collection('pulpit').find({}).toArray(); }
+
 
 
 
@@ -60,11 +61,12 @@ function DB() {
 
 
 
+
     // =============================================   UPDATE   =============================================
 
     this.updateFaculty = async (fields, newFacultyName) => {
         let collection = this.client.db().collection('faculty');
-        console.log('UPDATE:\t', fields, '\n');
+        console.log('UPDATE:\t', fields);
 
         return collection.findOneAndUpdate(
             { faculty: fields.faculty },
@@ -77,7 +79,7 @@ function DB() {
     this.updatePulpit = async (fields, newPulpitName, newFaculty) => {
         let collection = this.client.db().collection('pulpit');
         let facultyToFind = JSON.parse('{"faculty": "' + fields.faculty + '"}');
-        console.log('UPDATE:\t', fields, '\n');
+        console.log('UPDATE:\t', fields);
 
         await this.findOneAndThrowException('faculty', facultyToFind, false, 'There is no such faculty');
 
@@ -88,6 +90,25 @@ function DB() {
     }
 
 
+
+
+
+    // =============================================   DELETE   =============================================
+
+    this.deleteFaculty = async (facultyToDelete) => {
+        let collection = this.client.db().collection('faculty');
+        console.log('DELETE:\t', facultyToDelete);
+
+        return collection.findOneAndDelete({ faculty: facultyToDelete },);
+    }
+
+
+    this.deletePulpit = async (pulpitToDelete) => {
+        let collection = this.client.db().collection('pulpit');
+        console.log('DELETE:\t', pulpitToDelete);
+
+        return collection.findOneAndDelete({ pulpit: pulpitToDelete },);
+    }
 
 
 
