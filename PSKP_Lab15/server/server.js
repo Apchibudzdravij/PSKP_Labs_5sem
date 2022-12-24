@@ -31,18 +31,24 @@
 
 const MongoClient = require('mongodb').MongoClient;
 const connectionString = 'mongodb://localhost:27017'
-
+const DB = require('../database/db_module')();
 const client = new MongoClient(connectionString);
 
 
-(async () => {
-    await client.connect().then(() => { console.log('\nConnected to MongoDB'); });
+DB.getFaculties();
 
-    let collection = client.db('BSTU').collection('faculty');
 
-    let docs = await collection.find({ faculty_name: { $regex: /техно/i } }).toArray();
-    docs.forEach(el => { console.log(el.faculty, el.faculty_name); });
-})();
+
+// (async () => {
+//     await client.connect().then(() => { console.log('\nConnected to MongoDB!!'); });
+
+//     let collection = client.db('BSTU').collection('faculty');
+
+//     let docs = await collection.find({ faculty_name: { $regex: /техно/i } }).toArray();
+//     docs.forEach(el => { console.log(el.faculty, el.faculty_name); });
+// })().finally(() => client.close())
+
+
 
 
 // client.connect()
