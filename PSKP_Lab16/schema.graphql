@@ -15,6 +15,8 @@ type Pulpit {
     pulpit: String!
     pulpit_name: String!
     faculty: String!
+    teachers: [Teacher!]
+    subjects: [Subject!]
 }
 
 type Teacher {
@@ -27,6 +29,18 @@ type Subject {
     subject: String!
     subject_name: String!
     pulpit: String!
+}
+
+type TeachersBydFaculty {
+    faculty: String!
+    teachers: [Teacher]
+}
+
+type SubjectsByFaculty {
+    faculty: String!
+    pulpit: String!
+    pulpit_name: String!
+    subjects: [Subject]
 }
 
 
@@ -57,24 +71,26 @@ input inSubject {
 
 
 type Query {
-    faculties: [Faculty]!
-    pulpits: [Pulpit]
-    teachers: [Teacher]
-    subjects: [Subject]
+    getFaculties: [Faculty]
+    getPulpits: [Pulpit]
+    getTeachers: [Teacher]
+    getSubjects: [Subject]
 
-    faculty(faculty: String!): Faculty
-    pulpit(pulpit: String!): Pulpit
-    teacher(teacher: String!): Teacher
-    subject(subject: String!): Subject
+    getFaculties(faculty: String!): Faculty
+    getPulpits(pulpit: String!): Pulpit
+    getTeachers(teacher: String!): Teacher
+    getSubjects(subject: String!): Subject
 
-    pulpits_by_faculty(faculty: String): [Pulpit]!
-    teachers_by_pulpit(pulpit: String): [Teacher]!
-    subjects_by_pulpit(pulpit: String): [Subject]!
+    getPulpitsByFaculty(faculty: String): [Pulpit]!
+    getTeachersBtPulpit(pulpit: String): [Teacher]!
+    getTeachersByFaculty(faculty: String): [Teacher]!
+    getSubjectsByPulpit(pulpit: String): [Subject]!
+    getSubjectsByFaculty(faculty: String): [Subject]!
 }
 
 type Mutation {
-    add_faculty(faculty: inFaculty!): Faculty
-    add_pulpit(pulpit: inPulpit!): Pulpit
-    add_teacher(teacher: inTeacher!): Teacher
-    add_subject(subject: inSubject!): Subject
+    setFaculty(faculty: inFaculty!): Faculty
+    setPulpit(pulpit: inPulpit!): Pulpit
+    setTeacher(teacher: inTeacher!): Teacher
+    setSsubject(subject: inSubject!): Subject
 }
