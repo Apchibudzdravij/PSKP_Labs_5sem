@@ -3,6 +3,8 @@ schema {
     mutation: Mutation
 }
 
+
+
 type Faculty {
     faculty: String!
     faculty_name: String!
@@ -15,13 +17,19 @@ type Pulpit {
     faculty: String!
 }
 
-type Query {
-    faculties: [Faculty]!
-    faculty(faculty: String!): Faculty
-    pulpits: [Pulpit]
-    pulpit(pulpit: String!): Pulpit
-    pulpits_by_faculty(faculty: String): [Pulpit]!
+type Teacher {
+    teacher: String!
+    teacher_name: String!
+    pulpit: String!
 }
+
+type Subject {
+    subject: String!
+    subject_name: String!
+    pulpit: String!
+}
+
+
 
 input inFaculty {
     faculty: String!
@@ -34,7 +42,39 @@ input inPulpit {
     faculty: String!
 }
 
+input inTeacher {
+    teacher: String!
+    teacher_name: String!
+    pulpit: String!
+}
+
+input inSubject {
+    subject: String!
+    subject_name: String!
+    pulpit: String!
+}
+
+
+
+type Query {
+    faculties: [Faculty]!
+    pulpits: [Pulpit]
+    teachers: [Teacher]
+    subjects: [Subject]
+
+    faculty(faculty: String!): Faculty
+    pulpit(pulpit: String!): Pulpit
+    teacher(teacher: String!): Teacher
+    subject(subject: String!): Subject
+
+    pulpits_by_faculty(faculty: String): [Pulpit]!
+    teachers_by_pulpit(pulpit: String): [Teacher]!
+    subjects_by_pulpit(pulpit: String): [Subject]!
+}
+
 type Mutation {
     add_faculty(faculty: inFaculty!): Faculty
     add_pulpit(pulpit: inPulpit!): Pulpit
+    add_teacher(teacher: inTeacher!): Teacher
+    add_subject(subject: inSubject!): Subject
 }
