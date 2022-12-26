@@ -76,10 +76,10 @@ type Query {
     getTeachers: [Teacher]
     getSubjects: [Subject]
 
-    getFaculties(faculty: String!): Faculty
-    getPulpits(pulpit: String!): Pulpit
-    getTeachers(teacher: String!): Teacher
-    getSubjects(subject: String!): Subject
+    getFaculty(faculty: String!): Faculty
+    getPulpit(pulpit: String!): Pulpit
+    getTeacher(teacher: String!): Teacher
+    getSubject(subject: String!): Subject
 
     getPulpitsByFaculty(faculty: String): [Pulpit]
     getTeachersByPulpit(pulpit: String): [Teacher]
@@ -93,4 +93,9 @@ type Mutation {
     setPulpit(pulpit: inPulpit!): Pulpit
     setTeacher(teacher: inTeacher!): Teacher
     setSubject(subject: inSubject!): Subject
+
+    delFaculty(faculty: String!): Faculty
+    delPulpit(pulpit: String!): Pulpit
+    delTeacher(teacher: String!): Teacher
+    delSubject(subject: String!): Subject
 }

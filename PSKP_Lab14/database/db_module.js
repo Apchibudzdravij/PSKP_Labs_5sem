@@ -5,7 +5,7 @@ let config = {
     password: '1111',
     server: 'localhost',
     database: 'UNIVER',
-    pool: { max: 10, min: 0, },
+    pool: { max: 10, min: 4 },
     options: { trustServerCertificate: true }
 };
 
@@ -35,6 +35,23 @@ function DB() {
     this.getAuditoriumTypes = () => { return this.connPool.then(pool => pool.request().query('select * from AUDITORIUM_TYPE')) }
 
     this.getAuditoriums = () => { return this.connPool.then(pool => pool.request().query('select * from AUDITORIUM')) }
+
+    this.getFacultyAuditoriums = (faculty) => {
+        return this.connPool.then(pool => {
+            return pool.request()
+                .input('faculty', sql.NVarChar, faculty)
+                .query('select * from PULPIT where FACULTY = @faculty');
+        })
+    }
+
+    this.getAuditoriumsWithAuditoriumType = (audType) => {
+        return this.connPool.then(pool => {
+            return pool.request()
+                .input('audType', sql.NVarChar, audType)
+                .query('select * from AUDITORIUM where AUDITORIUM_TYPE = @audType');
+        })
+    }
+
 
 
 
@@ -94,6 +111,7 @@ function DB() {
 
 
 
+
     // =============================================   UPDATE   =============================================
 
     this.updateFaculties = (faculty, facultyName) => {
@@ -149,6 +167,7 @@ function DB() {
 
 
 
+
     // =============================================   DELETE   =============================================
 
     this.deleteFaculty = faculty => {
@@ -190,6 +209,7 @@ function DB() {
                 .query('delete from AUDITORIUM where AUDITORIUM = @auditorium')
         });
     }
+
 
 
 
