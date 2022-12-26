@@ -1,5 +1,5 @@
 const net = require('net');
-const HOST = '0.0.0.0';
+const HOST = '127.0.0.1';
 const PORT = 4000;
 let label = (pfx, socket) => { return `${pfx} ${socket.remoteAddress}:${socket.remotePort} -> `; }
 let connections = new Map();

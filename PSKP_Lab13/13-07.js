@@ -1,6 +1,6 @@
 const { createServer } = require('http');
 const net = require('net');
-const HOST = '0.0.0.0';
+const HOST = '127.0.0.1';
 const PORT_4000 = 4000;
 const PORT_5000 = 5000;
 
