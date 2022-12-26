@@ -13,14 +13,18 @@ function DB() {
 
     // =============================================   SELECT   =============================================
 
-    this.getFaculties = async () => { return await this.client.db().collection('faculty').find({}).toArray(); }
+    this.getFaculties = async () => await this.client.db().collection('faculty').find({}).toArray();
 
-    this.getPulpits  =  async () => { return await this.client.db().collection('pulpit').find({}).toArray(); }
+    this.getPulpits = async () => await this.client.db().collection('pulpit').find({}).toArray();
+
+    this.getFaculty = async (faculty) => await this.client.db().collection('faculty').find({ faculty: faculty }).toArray();
+
+    this.getPulpit = async (pulpit) => await this.client.db().collection('pulpit').find({ pulpit: pulpit }).toArray();
 
 
 
 
-
+    
     // =============================================   INSERT   =============================================
 
     this.insertFaculty = async (fields) => {
