@@ -11,8 +11,7 @@ let config = {
 };
 
 
-
-function DB (cb) {
+function DB(cb) {
     this.getFaculties = (args, context) => {
         return (new mssql.Request())
             .query('select * from FACULTY')
@@ -115,7 +114,7 @@ function DB (cb) {
             .input('a', mssql.NVarChar, args.FACULTY)
             .input('b', mssql.NVarChar, args.FACULTY_NAME)
             .query('insert FACULTY(FACULTY, FACULTY_NAME) values (@a, @b)')
-            .then((r) => {return args});
+            .then((r) => { return args });
     };
 
     this.insertPulpit = (args, context) => {
@@ -173,7 +172,7 @@ function DB (cb) {
             .input('c', mssql.NVarChar, args.PULPIT)
             .query('update SUBJECT set SUBJECT = @a, SUBJECT_NAME = @b, PULPIT = @c where SUBJECT = @a')
             .then((r) => {
-                return(r.rowsAffected[0] === 0) ? null : args;
+                return (r.rowsAffected[0] === 0) ? null : args;
             });
     };
 
@@ -196,8 +195,8 @@ function DB (cb) {
                 'inner join PULPIT on TEACHER.PULPIT = PULPIT.PULPIT ' +
                 `inner join FACULTY on PULPIT.FACULTY = FACULTY.FACULTY where FACULTY.FACULTY = @f`)
             .then((r) => {
-                let zaps = (o) => { return {TEACHER: o.TEACHER, TEACHER_NAME: o.TEACHER_NAME, PULPIT: o.PULPIT}};
-                let zapp = (o) => { return {FACULTY: o.FACULTY, TEACHERS: [zaps(o)]}               };
+                let zaps = (o) => { return { TEACHER: o.TEACHER, TEACHER_NAME: o.TEACHER_NAME, PULPIT: o.PULPIT } };
+                let zapp = (o) => { return { FACULTY: o.FACULTY, TEACHERS: [zaps(o)] } };
                 let rc = [];
                 r.recordset.forEach((el, index) => {
                     if (index === 0)
@@ -219,8 +218,8 @@ function DB (cb) {
                 'inner join PULPIT on subject.PULPIT = PULPIT.PULPIT ' +
                 'inner join FACULTY on PULPIT.FACULTY = FACULTY.FACULTY where FACULTY.FACULTY = @f')
             .then((r) => {
-                let zaps = (o) => {return {SUBJECT: o.SUBJECT, SUBJECT_NAME: o.SUBJECT_NAME, PULPIT: o.PULPIT}};
-                let zapp = (o) => {return {PULPIT: o.PULPIT, PULPIT_NAME: o.PULPIT_NAME, FACULTY: o.FACULTY, SUBJECTS:[zaps(o)]}};
+                let zaps = (o) => { return { SUBJECT: o.SUBJECT, SUBJECT_NAME: o.SUBJECT_NAME, PULPIT: o.PULPIT } };
+                let zapp = (o) => { return { PULPIT: o.PULPIT, PULPIT_NAME: o.PULPIT_NAME, FACULTY: o.FACULTY, SUBJECTS: [zaps(o)] } };
                 let rc = [];
                 r.recordset.forEach((el, index) => {
                     if (index === 0)

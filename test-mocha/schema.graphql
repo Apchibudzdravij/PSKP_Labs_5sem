@@ -8,12 +8,15 @@ schema {
 type Faculty {
     faculty: String!
     faculty_name: String!
+    pulpits: [Pulpit!]
 }
 
 type Pulpit {
     pulpit: String!
     pulpit_name: String!
     faculty: String!
+    teachers: [Teacher!]
+    subjects: [Subject!]
 }
 
 type Teacher {
@@ -68,10 +71,15 @@ input inSubject {
 
 
 type Query {
-    getFaculties(faculty: String!): Faculty
-    getPulpits(pulpit: String!): Pulpit
-    getTeachers(teacher: String!): Teacher
-    getSubjects(subject: String!): Subject
+    getFaculties: [Faculty]
+    getPulpits: [Pulpit]
+    getTeachers: [Teacher]
+    getSubjects: [Subject]
+
+    getFaculty(faculty: String!): Faculty
+    getPulpit(pulpit: String!): Pulpit
+    getTeacher(teacher: String!): Teacher
+    getSubject(subject: String!): Subject
 
     getPulpitsByFaculty(faculty: String): [Pulpit]
     getTeachersByPulpit(pulpit: String): [Teacher]

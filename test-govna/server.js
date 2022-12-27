@@ -1,6 +1,6 @@
 const http = require('http');
 const { graphql, buildSchema } = require('graphql');
-const schema = buildSchema(require('fs').readFileSync('./schema.graphql').toString());
+const schema = buildSchema(require('fs').readFileSync('./schema.gql').toString());
 const { DB } = require('./db_module');
 const resolver = require('./resolver');
 const { Error400, Resp200, IsError } = require('./errors');
@@ -28,13 +28,8 @@ const handler = (request, response) => {
                 let obj = JSON.parse(result);
                 console.log(obj);
                 if (obj.query) {
-                    graphql({
-                        schema: schema,
-                        source: obj.query,
-                        rootValue: undefined,
-                        contextValue: context,
-                        variableValues: obj.variables ? obj.variables : {}
-                    })
+                    graphql(
+                        schema, obj.query, resolver, context, obj.variables ? obj.variables : {})
                         .then((result) => {
                             new IsError(result)
                                 .then((json) => { Error400(response, '', json) })
