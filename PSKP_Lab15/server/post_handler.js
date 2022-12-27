@@ -39,10 +39,14 @@ function Post_Handler(req, res) {
 
 
         case '/transaction': {
+            const transactionOptions = {
+                readConcern: { level: 'local' },
+                writeContent: { write: 'majority' }
+            }
             req.on('data', chunk => { json += chunk; });
             req.on('end', () => {
                 json = JSON.parse(json);
-                DB.insertPulpits(json)
+                DB.insertPulpits(json, transactionOptions)
                     .then(records => { res.end(JSON.stringify(records, null, 4)); })
                     .catch(err => { error.handler(res, 421, err); });
             });

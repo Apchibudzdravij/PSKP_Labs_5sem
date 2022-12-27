@@ -65,54 +65,56 @@ function DB() {
     }
 
 
-    // --------------  ТРАНЗАКЦИЯ  --------------
-    this.insertPulpits = async (documents) => {
+    // ----------------  ТРАНЗАКЦИЯ  ----------------
+    this.insertPulpits = async (documents, transactionOptions) => {
+        // инициализируем текущую сессию
+        const session = this.client.startSession();
         // коллекции факультетов и палпитов
         let collectionPulpits = this.client.db().collection('pulpit');
         let collectionFaculties = this.client.db().collection('faculty');
         // массивы с входными данными: массив с id палпитов и массив с id факультетов
         let pulpitFieldsArray = documents.map(a => a.PULPIT);
         let facultiesFieldsArray = documents.map(a => a.FACULTY);
-        // выводим
+        // выводим входные данные
         console.log('INSERT:\t', documents);
         console.log('PULPITS:   ', pulpitFieldsArray);
         console.log('FACULTIES: ', facultiesFieldsArray);
+        // начинаем явную транзакцию
+        session.startTransaction(transactionOptions);
 
 
         // проверяем, есть ли уже в бд такие же палпиты: если уже есть, то кидаем эксепшен
-        let recordsPulpits = await collectionPulpits
+        await collectionPulpits
             .find({ pulpit: { $in: pulpitFieldsArray } }).toArray()
             .then(rec => {
                 console.log('PULPITS SEARCH:\t', rec);
                 if (rec.length != 0) {
-                    throw 'There are already such pulpits';             // TODO: rollback
+                    session.abortTransaction();
+                    throw 'There are already such pulpits';
                 }
-                return rec;
             })
-        // console.log('RECORD:  ', recordsPulpits);
-        // if (recordsPulpits.length > 0) throw 'There are already such pulpits';
 
 
         // проверяем, есть ли в бд такие факультеты: если таких няма, то кидаем эксепшен
-        let recordsFaculties = await collectionFaculties
+        await collectionFaculties
             .find({ faculty: { $in: facultiesFieldsArray } }).toArray()
             .then(rec => {
-                console.log('FACULTIES SEARCH:\t', rec);
+                console.log('FACULTIES SEARCH: ', rec);
                 if (rec.length != facultiesFieldsArray.length) {
-                    throw 'Enter correct faculty name';             // TODO: rollback
+                    session.abortTransaction();
+                    throw 'There is no such faculties';
                 }
-                return rec;
             });
 
 
-        let insertResult = await collectionPulpits.insertMany(documents);
-        console.log('RESULT:', insertResult, '\n');
+        // если выше не выкинулся эксепшен, то вставляем код в бд
+        await collectionPulpits.insertMany(documents).then(res => { console.log('RESULT:\t', res); });
 
-        let returnRecord = collectionPulpits.find({ pulpit: { $in: pulpitFieldsArray } }).toArray();
-        returnRecord.then(record => {
-            console.log('RETURN:  ', record);
-            return record;
-        });
+        // коммитим транзакцию
+        session.commitTransaction();
+
+        // и возвращаем клиенту что он вставил
+        return documents;
     }
 
 
