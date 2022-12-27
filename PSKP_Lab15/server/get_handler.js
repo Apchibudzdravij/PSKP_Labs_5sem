@@ -33,8 +33,16 @@ function Get_Handler(req, res) {
         }
 
         case '/api/pulpits': {
-            console.log('XYZ:\t', xyzParameter)
-            if (xyzParameter === undefined) {
+            let facQueryParameter = url.parse(req.url, true).query.fac;
+            console.log('XYZ:\t', xyzParameter);
+            console.log('FAC:\t', facQueryParameter);
+
+            if (facQueryParameter != undefined) {
+                DB.getFacultyPulpits(facQueryParameter)
+                    .then(records => { res.end(JSON.stringify(records, null, 4)); })
+                    .catch(err => { error.handler(res, 421, err.message); });
+            }
+            else if (xyzParameter === undefined) {
                 DB.getPulpits()
                     .then(records => { res.end(JSON.stringify(records, null, 4)); })
                     .catch(err => { error.handler(res, 412, err.message); });

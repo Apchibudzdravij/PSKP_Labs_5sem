@@ -38,6 +38,18 @@ function Post_Handler(req, res) {
         }
 
 
+        case '/transaction': {
+            req.on('data', chunk => { json += chunk; });
+            req.on('end', () => {
+                json = JSON.parse(json);
+                DB.insertPulpits(json)
+                    .then(records => { res.end(JSON.stringify(records, null, 4)); })
+                    .catch(err => { error.handler(res, 421, err.message); });
+            });
+            break;
+        }
+
+
         default: error.handler(res, 410, 'Incorrect URL'); break;
     }
 }

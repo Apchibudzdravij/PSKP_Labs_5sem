@@ -21,10 +21,12 @@ function DB() {
 
     this.getPulpit = async (pulpit) => await this.client.db().collection('pulpit').find({ pulpit: pulpit }).toArray();
 
+    this.getFacultyPulpits = async (faculties) => await this.client.db().collection('pulpit').find({ faculty: { $in: faculties } }).toArray();
 
 
 
-    
+
+
     // =============================================   INSERT   =============================================
 
     this.insertFaculty = async (fields) => {
@@ -59,6 +61,38 @@ function DB() {
         return collection.findOne(fields).then(record => {
             if (!record) throw 'There is no records';
             else return record;
+        });
+    }
+
+
+    this.insertPulpits = async (documents) => {
+        let collection = this.client.db().collection('pulpit');
+        let collectionFaculties = this.client.db().collection('pulpit');
+        let pulpitFieldsArray = documents.map(a => a.PULPIT);
+        let facultiesFieldsArray = documents.map(a => a.FACULTY);
+        console.log('INSERT:\t', documents);
+        console.log('PULPITS:   ', pulpitFieldsArray);
+        console.log('FACULTIES: ', facultiesFieldsArray);
+
+        let recordsPulpits = collection.find({ pulpit: { $in: pulpitFieldsArray } }).toArray();
+        console.log('RECORD:  ', recordsPulpits);
+        if (recordsPulpits.length > 0) throw 'There are already such pulpits';
+
+
+        let recordsFaculties = await collectionFaculties.find({ faculty: { $in: facultiesFieldsArray } }).toArray()
+            .then(rec => { console.log('TEST:\t',rec) });
+        recordsFaculties.then(record => {
+            if (record.length == 0) throw 'There are already such faculties';
+            else return record;
+        })
+
+        let insertResult = await collection.insertMany(documents);
+        console.log('RESULT:', insertResult, '\n');
+
+        let returnRecord = collection.find({ pulpit: { $in: pulpitFieldsArray } }).toArray();
+        returnRecord.then(record => {
+            console.log('RETURN:  ', record);
+            return record;
         });
     }
 
