@@ -68,7 +68,7 @@ function DB() {
     // --------------  ТРАНЗАКЦИЯ  --------------
     this.insertPulpits = async (documents) => {
         // коллекции факультетов и палпитов
-        let collection = this.client.db().collection('pulpit');
+        let collectionPulpits = this.client.db().collection('pulpit');
         let collectionFaculties = this.client.db().collection('faculty');
         // массивы с входными данными: массив с id палпитов и массив с id факультетов
         let pulpitFieldsArray = documents.map(a => a.PULPIT);
@@ -79,16 +79,25 @@ function DB() {
         console.log('FACULTIES: ', facultiesFieldsArray);
 
 
-        let recordsPulpits = collection.find({ pulpit: { $in: pulpitFieldsArray } }).toArray();
-        console.log('RECORD:  ', recordsPulpits);
-        if (recordsPulpits.length > 0) throw 'There are already such pulpits';
+        // проверяем, есть ли уже в бд такие же палпиты: если уже есть, то кидаем эксепшен
+        let recordsPulpits = await collectionPulpits
+            .find({ pulpit: { $in: pulpitFieldsArray } }).toArray()
+            .then(rec => {
+                console.log('PULPITS SEARCH:\t', rec);
+                if (rec.length != 0) {
+                    throw 'There are already such pulpits';             // TODO: rollback
+                }
+                return rec;
+            })
+        // console.log('RECORD:  ', recordsPulpits);
+        // if (recordsPulpits.length > 0) throw 'There are already such pulpits';
 
 
-        // проверяем, корректны ли все названия факультетов, иначе возвращаем исключение:
+        // проверяем, есть ли в бд такие факультеты: если таких няма, то кидаем эксепшен
         let recordsFaculties = await collectionFaculties
             .find({ faculty: { $in: facultiesFieldsArray } }).toArray()
             .then(rec => {
-                console.log('FACULTIES SEARCH:\t', rec)
+                console.log('FACULTIES SEARCH:\t', rec);
                 if (rec.length != facultiesFieldsArray.length) {
                     throw 'Enter correct faculty name';             // TODO: rollback
                 }
@@ -96,10 +105,10 @@ function DB() {
             });
 
 
-        let insertResult = await collection.insertMany(documents);
+        let insertResult = await collectionPulpits.insertMany(documents);
         console.log('RESULT:', insertResult, '\n');
 
-        let returnRecord = collection.find({ pulpit: { $in: pulpitFieldsArray } }).toArray();
+        let returnRecord = collectionPulpits.find({ pulpit: { $in: pulpitFieldsArray } }).toArray();
         returnRecord.then(record => {
             console.log('RETURN:  ', record);
             return record;
