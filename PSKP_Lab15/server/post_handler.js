@@ -44,7 +44,7 @@ function Post_Handler(req, res) {
                 json = JSON.parse(json);
                 DB.insertPulpits(json)
                     .then(records => { res.end(JSON.stringify(records, null, 4)); })
-                    .catch(err => { error.handler(res, 421, err.message); });
+                    .catch(err => { error.handler(res, 421, err); });
             });
             break;
         }

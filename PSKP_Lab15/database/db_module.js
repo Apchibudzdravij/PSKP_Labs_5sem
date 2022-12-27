@@ -65,26 +65,36 @@ function DB() {
     }
 
 
+    // --------------  ТРАНЗАКЦИЯ  --------------
     this.insertPulpits = async (documents) => {
+        // коллекции факультетов и палпитов
         let collection = this.client.db().collection('pulpit');
-        let collectionFaculties = this.client.db().collection('pulpit');
+        let collectionFaculties = this.client.db().collection('faculty');
+        // массивы с входными данными: массив с id палпитов и массив с id факультетов
         let pulpitFieldsArray = documents.map(a => a.PULPIT);
         let facultiesFieldsArray = documents.map(a => a.FACULTY);
+        // выводим
         console.log('INSERT:\t', documents);
         console.log('PULPITS:   ', pulpitFieldsArray);
         console.log('FACULTIES: ', facultiesFieldsArray);
+
 
         let recordsPulpits = collection.find({ pulpit: { $in: pulpitFieldsArray } }).toArray();
         console.log('RECORD:  ', recordsPulpits);
         if (recordsPulpits.length > 0) throw 'There are already such pulpits';
 
 
-        let recordsFaculties = await collectionFaculties.find({ faculty: { $in: facultiesFieldsArray } }).toArray()
-            .then(rec => { console.log('TEST:\t',rec) });
-        recordsFaculties.then(record => {
-            if (record.length == 0) throw 'There are already such faculties';
-            else return record;
-        })
+        // проверяем, корректны ли все названия факультетов, иначе возвращаем исключение:
+        let recordsFaculties = await collectionFaculties
+            .find({ faculty: { $in: facultiesFieldsArray } }).toArray()
+            .then(rec => {
+                console.log('FACULTIES SEARCH:\t', rec)
+                if (rec.length != facultiesFieldsArray.length) {
+                    throw 'Enter correct faculty name';             // TODO: rollback
+                }
+                return rec;
+            });
+
 
         let insertResult = await collection.insertMany(documents);
         console.log('RESULT:', insertResult, '\n');
