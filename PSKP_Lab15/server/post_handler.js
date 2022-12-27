@@ -41,7 +41,7 @@ function Post_Handler(req, res) {
         case '/transaction': {
             const transactionOptions = {
                 readConcern: { level: 'local' },
-                writeContent: { write: 'majority' }
+                writeConcern: { w: 'majority' }
             }
             req.on('data', chunk => { json += chunk; });
             req.on('end', () => {
