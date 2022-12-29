@@ -73,8 +73,8 @@ function DB() {
         let collectionPulpits = this.client.db().collection('pulpit');
         let collectionFaculties = this.client.db().collection('faculty');
         // массивы с входными данными: массив с id палпитов и массив с id факультетов
-        let pulpitFieldsArray = documents.map(a => a.PULPIT);
-        let facultiesFieldsArray = documents.map(a => a.FACULTY);
+        let pulpitFieldsArray = documents.map(a => a.pulpit);
+        let facultiesFieldsArray = documents.map(a => a.faculty);
         // выводим входные данные
         console.log('INSERT:\t', documents);
         console.log('PULPITS:   ', pulpitFieldsArray);
@@ -95,7 +95,7 @@ function DB() {
             })
 
 
-        // проверяем, есть ли в бд такие факультеты: если таких няма, то кидаем эксепшен
+        //проверяем, есть ли в бд такие факультеты: если таких няма, то кидаем эксепшен
         await collectionFaculties
             .find({ faculty: { $in: facultiesFieldsArray } }).toArray()
             .then(rec => {
@@ -105,7 +105,6 @@ function DB() {
                     throw 'There is no such faculties';
                 }
             });
-
 
         // если выше не выкинулся эксепшен, то вставляем код в бд
         await collectionPulpits.insertMany(documents).then(res => { console.log('RESULT:\t', res); });
