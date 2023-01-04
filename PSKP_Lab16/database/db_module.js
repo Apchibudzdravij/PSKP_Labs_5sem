@@ -169,18 +169,18 @@ function DB(callBack) {
     this.insertSubject = (args, context) => {
         return (new mssql.Request())
             .input('subject', mssql.NVarChar, args.SUBJECT)
-            .input('b', mssql.NVarChar, args.SUBJECT_NAME)
+            .input('subject_name', mssql.NVarChar, args.SUBJECT_NAME)
             .input('pulpit', mssql.NVarChar, args.PULPIT)
-            .query('insert SUBJECT(SUBJECT, SUBJECT_NAME, PULPIT) values (@subject, @b, @pulpit)')
+            .query('insert SUBJECT(SUBJECT, SUBJECT_NAME, PULPIT) values (@subject, @subject_name, @pulpit)')
             .then(record => { return args });
     };
 
     this.insertTeacher = (args, context) => {
         return (new mssql.Request())
             .input('teacher', mssql.NVarChar, args.TEACHER)
-            .input('b', mssql.NVarChar, args.TEACHER_NAME)
+            .input('teacher_name', mssql.NVarChar, args.TEACHER_NAME)
             .input('pulpit', mssql.NVarChar, args.PULPIT)
-            .query('insert teacher(TEACHER, TEACHER_NAME, PULPIT) values (@teacher, @b, @pulpit)')
+            .query('insert teacher(TEACHER, TEACHER_NAME, PULPIT) values (@teacher, @teacher_name, @pulpit)')
             .then(record => { return args });
     };
 
@@ -210,18 +210,18 @@ function DB(callBack) {
     this.updateSubject = (args, context) => {
         return (new mssql.Request())
             .input('subject', mssql.NVarChar, args.SUBJECT)
-            .input('b', mssql.NVarChar, args.SUBJECT_NAME)
+            .input('subject_name', mssql.NVarChar, args.SUBJECT_NAME)
             .input('pulpit', mssql.NVarChar, args.PULPIT)
-            .query('update SUBJECT set SUBJECT = @subject, SUBJECT_NAME = @b, PULPIT = @pulpit where SUBJECT = @subject')
+            .query('update SUBJECT set SUBJECT = @subject, SUBJECT_NAME = @subject_name, PULPIT = @pulpit where SUBJECT = @subject')
             .then(record => { return (record.rowsAffected[0] === 0) ? null : args; });
     };
 
     this.updateTeacher = (args, context) => {
         return (new mssql.Request())
             .input('teacher', mssql.NVarChar, args.TEACHER)
-            .input('b', mssql.NVarChar, args.TEACHER_NAME)
+            .input('teacher_name', mssql.NVarChar, args.TEACHER_NAME)
             .input('pulpit', mssql.NVarChar, args.PULPIT)
-            .query('update TEACHER set TEACHER = @teacher, TEACHER_NAME = @b, PULPIT = @pulpit where TEACHER = @teacher')
+            .query('update TEACHER set TEACHER = @teacher, TEACHER_NAME = @teacher_name, PULPIT = @pulpit where TEACHER = @teacher')
             .then(record => { return (record.rowsAffected[0] === 0) ? null : args; });
     };
 
